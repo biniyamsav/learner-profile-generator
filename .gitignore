@@ -1,16 +1,42 @@
-# Virtual environment & runtime
+# Virtual environment and Python runtime
 .venv/
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
 *.env
 
-# Ignore all files inside phase0_proof_of_concept by default
-phase0_proof_of_concept/*
-
-# Un-ignore only the specific files you want to track
-!phase0_proof_of_concept/parser.py
-!phase0_proof_of_concept/test_parser.py
-
-# Ignore sensitive data / checkpoints
-phase0_proof_of_concept/batch_checkpoints/
+# Ignore private/generated data and chat export artifacts
 phase0_proof_of_concept/Data/
+phase0_proof_of_concept/batch_checkpoints/
+phase0_proof_of_concept/**/Data/
+phase0_proof_of_concept/**/batch_checkpoints/
+phase0_proof_of_concept/**/chatgpt_history/
+phase0_proof_of_concept/**/sites/
+phase0_proof_of_concept/**/*.json
+phase0_proof_of_concept/**/*.html
+phase0_proof_of_concept/**/*.log
+phase0_proof_of_concept/**/user_messages*.json
+phase0_proof_of_concept/**/export_manifest.json
+phase0_proof_of_concept/**/message_feedback.json
+phase0_proof_of_concept/**/user.json
+phase0_proof_of_concept/**/user_settings.json
+
+# Keep the project structure and the public source files you want to push
+!phase0_proof_of_concept/
+!phase0_proof_of_concept/extractor.py
+!phase0_proof_of_concept/parser.py
+!phase0_proof_of_concept/profile_builder.py
+!phase0_proof_of_concept/test_parser.py
+!phase0_proof_of_concept/test_profile_builder.py
+!phase0_proof_of_concept/profile_builder_with_groq.py
+
+# Keep empty project folders visible in Git as placeholders
+!phase1_ingestion/
+!phase2_rag/
+!phase3_personalization/
+
+# Do not commit the local generated/private artifacts from the proof-of-concept
 phase0_proof_of_concept/*.json
+phase0_proof_of_concept/*.html
+phase0_proof_of_concept/*.log
