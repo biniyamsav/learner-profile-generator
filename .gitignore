@@ -1,0 +1,16 @@
+# Virtual environment & runtime
+.venv/
+__pycache__/
+*.env
+
+# Ignore all files inside phase0_proof_of_concept by default
+phase0_proof_of_concept/*
+
+# Un-ignore only the specific files you want to track
+!phase0_proof_of_concept/parser.py
+!phase0_proof_of_concept/test_parser.py
+
+# Ignore sensitive data / checkpoints
+phase0_proof_of_concept/batch_checkpoints/
+phase0_proof_of_concept/Data/
+phase0_proof_of_concept/*.json

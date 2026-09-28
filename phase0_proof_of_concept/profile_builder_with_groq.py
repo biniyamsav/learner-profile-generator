@@ -159,7 +159,16 @@ def load_user_messages(filepath: Path) -> List[Dict[str, Any]]:
         raise ProfileBuilderError(f"Messages file not found: {filepath}")
     with open(filepath, "r", encoding="utf-8") as f:
         data = json.load(f)
-    return data if isinstance(data, list) else data.get("messages", [])
+
+    messages = data if isinstance(data, list) else data.get("messages", [])
+    normalized: List[Dict[str, Any]] = []
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        normalized_msg = dict(msg)
+        normalized_msg["text"] = msg.get("text") or msg.get("content") or ""
+        normalized.append(normalized_msg)
+    return normalized
 
 
 def make_batches(messages: List[Dict[str, Any]], batch_size: int = 1000) -> List[List[Dict[str, Any]]]:
@@ -170,7 +179,7 @@ def make_batches(messages: List[Dict[str, Any]], batch_size: int = 1000) -> List
 def build_batch_prompt(batch: List[Dict[str, Any]]) -> str:
     """Builds the extraction prompt for a single batch of messages."""
     messages_text = "\n".join(
-        f"- [{msg.get('timestamp', 'N/A')}] {msg.get('text', '')}" for msg in batch
+        f"- [{msg.get('timestamp', 'N/A')}] {msg.get('text') or msg.get('content') or ''}" for msg in batch
     )
     return f"""Analyze the following user chat history batch and extract insights into a structured JSON profile.
 
@@ -269,8 +278,15 @@ def main():
                 parsed_profiles.append(json.load(f))
             continue
 
+        raw_batch_path = checkpoints_dir / f"batch_{idx:02d}_raw.json"
+        with open(raw_batch_path, "w", encoding="utf-8") as f:
+            json.dump(batch, f, ensure_ascii=False, indent=2)
+
         logger.info("Processing Batch %d/%d (%d messages)...", idx, len(batches), len(batch))
         prompt = build_batch_prompt(batch)
+        prompt_path = checkpoints_dir / f"batch_{idx:02d}_prompt.txt"
+        with open(prompt_path, "w", encoding="utf-8") as f:
+            f.write(prompt)
 
         try:
             raw_response = provider.generate(prompt)
@@ -281,6 +297,17 @@ def main():
 
             with open(checkpoint_path, "w", encoding="utf-8") as f:
                 json.dump(parsed, f, ensure_ascii=False, indent=2)
+
+            insight_path = checkpoints_dir / f"batch_{idx:02d}_insight.json"
+            with open(insight_path, "w", encoding="utf-8") as f:
+                json.dump(parsed, f, ensure_ascii=False, indent=2)
+
+            raw_response_path = checkpoints_dir / f"batch_{idx:02d}_llm_response.txt"
+            with open(raw_response_path, "w", encoding="utf-8") as f:
+                f.write(raw_response)
+
+            with open(raw_batch_path, "w", encoding="utf-8") as f:
+                json.dump(batch, f, ensure_ascii=False, indent=2)
 
             parsed_profiles.append(parsed)
             logger.info("Batch %d/%d completed and saved.", idx, len(batches))
