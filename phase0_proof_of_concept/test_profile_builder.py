@@ -1,0 +1,167 @@
+import pytest
+from profile_builder import (
+    extract_json_from_llm_text,
+    validate_profile_schema,
+    LLMResponseError,
+)
+
+VALID_PROFILE = {
+    "communication_preferences": {
+        "verbosity": {"value": "moderate", "confidence": 0.7}
+    },
+    "explanation_preferences": {
+        "step_by_step": {"value": True, "confidence": 0.8}
+    },
+    "learning_evidence": [
+        {"concept": "SQL joins", "state": "practiced", "confidence": 0.6, "evidence_count": 3}
+    ],
+}
+
+
+# ------------------------------------------------------------------ #
+# extract_json_from_llm_text
+# ------------------------------------------------------------------ #
+
+def test_extract_json_handles_clean_json():
+    text = '{"a": 1}'
+    assert extract_json_from_llm_text(text) == {"a": 1}
+
+
+def test_extract_json_handles_markdown_fence():
+    text = '```json\n{"a": 1}\n```'
+    assert extract_json_from_llm_text(text) == {"a": 1}
+
+
+def test_extract_json_handles_fence_without_json_label():
+    text = '```\n{"a": 1}\n```'
+    assert extract_json_from_llm_text(text) == {"a": 1}
+
+
+def test_extract_json_handles_extra_text_around_json():
+    text = 'Sure, here is the result:\n{"a": 1}\nLet me know if you need more.'
+    assert extract_json_from_llm_text(text) == {"a": 1}
+
+
+def test_extract_json_raises_on_garbage_input():
+    with pytest.raises(LLMResponseError):
+        extract_json_from_llm_text("this is not json at all")
+
+
+def test_extract_json_raises_on_empty_string():
+    with pytest.raises(LLMResponseError):
+        extract_json_from_llm_text("")
+
+
+# ------------------------------------------------------------------ #
+# validate_profile_schema
+# ------------------------------------------------------------------ #
+
+def test_validate_schema_accepts_valid_profile():
+    validate_profile_schema(VALID_PROFILE)  # should not raise
+
+
+def test_validate_schema_rejects_non_dict():
+    with pytest.raises(LLMResponseError):
+        validate_profile_schema(["not", "a", "dict"])
+
+
+def test_validate_schema_rejects_missing_top_level_key():
+    broken = {k: v for k, v in VALID_PROFILE.items() if k != "learning_evidence"}
+    with pytest.raises(LLMResponseError):
+        validate_profile_schema(broken)
+
+
+def test_validate_schema_rejects_learning_evidence_not_a_list():
+    broken = {**VALID_PROFILE, "learning_evidence": {"not": "a list"}}
+    with pytest.raises(LLMResponseError):
+        validate_profile_schema(broken)
+
+
+def test_validate_schema_rejects_trait_missing_confidence():
+    broken = {
+        **VALID_PROFILE,
+        "communication_preferences": {"verbosity": {"value": "moderate"}},  # no confidence
+    }
+    with pytest.raises(LLMResponseError):
+        validate_profile_schema(broken)
+
+
+# ------------------------------------------------------------------ #
+# make_batches / checkpointing / resume
+# ------------------------------------------------------------------ #
+
+import json
+import profile_builder
+from profile_builder import make_batches, build_profile, LLMResponseError
+
+
+def _msgs(n, chars=10):
+    return [{"message_id": f"m{i}", "content": "x" * chars} for i in range(n)]
+
+
+def test_make_batches_respects_message_count_cap():
+    batches = make_batches(_msgs(10), batch_size=4, max_chars=10_000)
+    assert [len(b) for b in batches] == [4, 4, 2]
+
+
+def test_make_batches_respects_character_cap():
+    # 10 messages x 100 chars, cap of 250 chars -> 2 messages per batch
+    batches = make_batches(_msgs(10, chars=100), batch_size=1000, max_chars=250)
+    assert all(len(b) <= 2 for b in batches)
+    assert sum(len(b) for b in batches) == 10
+
+
+def test_make_batches_keeps_oversized_single_message():
+    batches = make_batches(_msgs(1, chars=5000), batch_size=10, max_chars=100)
+    assert len(batches) == 1 and len(batches[0]) == 1
+
+
+class FakeLLM:
+    def __init__(self, fail_first_n=0):
+        self.calls = 0
+        self.fail_first_n = fail_first_n
+
+    def generate(self, prompt):
+        self.calls += 1
+        if self.calls <= self.fail_first_n:
+            raise LLMResponseError("simulated failure")
+        return json.dumps(VALID_PROFILE)
+
+
+def _setup(tmp_path, monkeypatch, n_messages=6):
+    monkeypatch.setattr(profile_builder, "CHECKPOINT_DIR", tmp_path / "ckpt")
+    monkeypatch.setattr(profile_builder, "BATCH_COOLDOWN_SECONDS", 0)
+    monkeypatch.setattr(profile_builder, "BATCH_SIZE", 2)  # 6 messages -> 3 batches
+    path = tmp_path / "msgs.json"
+    path.write_text(json.dumps(_msgs(n_messages)), encoding="utf-8")
+    return path
+
+
+def test_resume_skips_batches_that_already_succeeded(tmp_path, monkeypatch):
+    path = _setup(tmp_path, monkeypatch)
+
+    first = FakeLLM()
+    build_profile(path, first)
+    assert first.calls == 3
+
+    second = FakeLLM()
+    build_profile(path, second)
+    assert second.calls == 0  # everything came from checkpoints
+
+
+def test_failed_batch_is_retried_on_rerun_without_redoing_others(tmp_path, monkeypatch):
+    path = _setup(tmp_path, monkeypatch)
+
+    flaky = FakeLLM(fail_first_n=1)  # batch 1 fails, batches 2-3 succeed
+    build_profile(path, flaky)
+    assert flaky.calls == 3
+
+    rerun = FakeLLM()
+    build_profile(path, rerun)
+    assert rerun.calls == 1  # only the one failed batch is sent again
+
+
+def test_all_batches_failing_raises(tmp_path, monkeypatch):
+    path = _setup(tmp_path, monkeypatch)
+    with pytest.raises(profile_builder.ProfileBuilderError):
+        build_profile(path, FakeLLM(fail_first_n=99))

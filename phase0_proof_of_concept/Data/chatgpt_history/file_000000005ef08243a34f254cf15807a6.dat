@@ -1,0 +1,619 @@
+2026-07-22 11:58:36.672 [info] Python-envs extension version: 1.36.0
+2026-07-22 11:58:36.672 [info] 
+=== Python Envs Configuration Levels ===
+2026-07-22 11:58:36.672 [info] {
+  "section": "Python Envs Configuration Levels",
+  "defaultEnvManager": {
+    "workspaceFolderValue": "undefined",
+    "workspaceValue": "undefined",
+    "globalValue": "undefined",
+    "defaultValue": "ms-python.python:venv"
+  },
+  "defaultPackageManager": {
+    "workspaceFolderValue": "undefined",
+    "workspaceValue": "undefined",
+    "globalValue": "undefined",
+    "defaultValue": "ms-python.python:pip"
+  }
+}
+2026-07-22 11:58:36.672 [info] [pet] Starting Python Locator c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\python-env-tools\bin\pet.exe server
+2026-07-22 11:58:36.672 [info] Registering pyenv manager (environments will be discovered lazily)
+2026-07-22 11:58:36.672 [info] Registering pipenv manager (environments will be discovered lazily)
+2026-07-22 11:58:36.672 [info] Registering poetry manager (environments will be discovered lazily)
+2026-07-22 11:58:36.708 [info] [pet] configure: Sending configuration update: {"workspaceDirectories":["c:\\Users\\fahhh\\Desktop\\vscode\\mypyton"],"environmentDirectories":["c:/Users/fahhh/Desktop/vscode/mypyton/.venv","c:/Users/fahhh/Desktop/vscode/mypyton/*/.venv"],"pipenvExecutable":"pipenv","poetryExecutable":"poetry","cacheDirectory":"c:\\Users\\fahhh\\AppData\\Roaming\\Code\\User\\globalStorage\\ms-python.vscode-python-envs\\pythonLocator"}
+2026-07-22 11:58:36.724 [error] [pet] [2m   0.591655300s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:36.728 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:39.242 [info] Refreshing Pyenv Environments
+2026-07-22 11:58:39.242 [info] Refreshing pyenv environments
+2026-07-22 11:58:39.242 [info] Refreshing Pipenv Environments
+2026-07-22 11:58:39.242 [info] Refreshing pipenv environments
+2026-07-22 11:58:39.242 [info] Refreshing Poetry Environments
+2026-07-22 11:58:39.242 [info] Refreshing poetry environments
+2026-07-22 11:58:39.376 [error] [pet] [2m   3.132843700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.132931300s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:39.688 [error] [pet] [2m   3.556261600s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.556318000s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:39.795 [error] [pet] [2m   3.663789300s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.663846800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:39.799 [info] Conda not found, turning off conda features. [Error: Conda not found
+	at L (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:629081)
+	at runNextTicks (node:internal/process/task_queues:65:5)
+	at process.processImmediate (node:internal/timers:472:9)
+	at async V (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:629206)
+	at async t.registerCondaFeatures (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:648591)
+	at async t.safeRegister (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:290365)
+	at async Promise.all (index 1)
+	at async Immediate.<anonymous> (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:782813)]
+2026-07-22 11:58:39.802 [info] [interpreterSelection] Applying initial environment selection for 1 workspace folder(s)
+2026-07-22 11:58:39.807 [error] [pet] [2m   3.675385800s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:39.807 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:39.813 [error] [pet] [2m   3.681832700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.681917200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:39.818 [error] [pet] [2m   3.687340700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.687382800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:39.824 [error] [pet] [2m   3.692441800s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.692486100s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:39.891 [info] [SYS_SET] scope=c:\Users\fahhh\Desktop\vscode\mypyton, project=c:\Users\fahhh\Desktop\vscode\mypyton, normalizedKey=c:/users/fahhh/desktop/vscode/mypyton, env=Python 3.14.6-s3tibop0ioa
+2026-07-22 11:58:39.905 [info] Python API: Changed environment from undefined to Python 3.14.6 for: c:\Users\fahhh\Desktop\vscode\mypyton
+2026-07-22 11:58:39.905 [info] Internal: Changed environment from undefined to Python 3.14.6 for: c:\Users\fahhh\Desktop\vscode\mypyton
+2026-07-22 11:58:39.906 [info] [interpreterSelection] mypyton: Python 3.14.6 (source: autoDiscovery)
+2026-07-22 11:58:39.906 [info] [interpreterSelection] Workspace env resolved, deferring global scope to background
+2026-07-22 11:58:39.920 [error] [pet] [2m   3.772805000s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+[2m   3.777121900s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.777154200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+[2m   3.782214900s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.782248800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+[2m   3.785874700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.785904800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:39.921 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:39.922 [info] Python API: Changed environment from undefined to Python 3.14.6 for: global
+2026-07-22 11:58:39.922 [info] Internal: Changed environment from undefined to Python 3.14.6 for: global
+2026-07-22 11:58:39.922 [info] [interpreterSelection] global: Python 3.14.6 (source: autoDiscovery)
+2026-07-22 11:58:39.942 [info] Refreshing pyenv environments
+2026-07-22 11:58:39.989 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:58:39.989 [info] Refreshing pipenv environments
+2026-07-22 11:58:39.997 [error] [pet] [2m   3.865271100s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:39.998 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:40.003 [error] [pet] [2m   3.872236000s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.872281600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:40.009 [error] [pet] [2m   3.877496600s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.877535700s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:40.013 [error] [pet] [2m   3.882344000s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.882383800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:40.014 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:58:40.014 [info] Found 0 pipenv environments
+2026-07-22 11:58:40.028 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:58:40.043 [info] Refreshing poetry environments
+2026-07-22 11:58:40.056 [info] Poetry executable not found
+2026-07-22 11:58:40.071 [info] Environment discovery complete: 1 environments found (Global: 1)
+2026-07-22 11:58:40.080 [error] [pet] [2m   3.949003100s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:40.082 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:40.087 [error] [pet] [2m   3.955695200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.955757300s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:40.091 [error] [pet] [2m   3.959437000s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.959470000s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:40.094 [error] [pet] [2m   3.962656800s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   3.962705500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:40.182 [error] [pet] [2m   4.051005900s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:40.185 [error] [pet] [2m   4.053714800s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:40.186 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:40.191 [error] [pet] [2m   4.060153800s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.060198900s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:40.199 [error] [pet] [2m   4.065921700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.065995600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:40.202 [error] [pet] [2m   4.071228400s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.071288900s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:40.281 [error] [pet] [2m   4.149959600s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:58:40.282 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:40.290 [error] [pet] [2m   4.158662200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.158707300s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:58:40.295 [error] [pet] [2m   4.163649500s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.163696600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:58:40.297 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:58:40.297 [info] Found 0 pipenv environments
+2026-07-22 11:58:40.300 [error] [pet] [2m   4.168935200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   4.168992000s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:58:40.373 [info] Poetry executable not found
+2026-07-22 11:58:44.426 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.433 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.442 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.449 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.455 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.624 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.634 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.641 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.648 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:44.654 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:58:55.778 [info] runInTerminal: sendText & C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe c:/Users/fahhh/Desktop/vscode/mypyton/main.py
+2026-07-22 11:59:23.842 [info] Python-envs extension version: 1.36.0
+2026-07-22 11:59:23.842 [info] 
+=== Python Envs Configuration Levels ===
+2026-07-22 11:59:23.843 [info] {
+  "section": "Python Envs Configuration Levels",
+  "defaultEnvManager": {
+    "workspaceFolderValue": "undefined",
+    "workspaceValue": "undefined",
+    "globalValue": "undefined",
+    "defaultValue": "ms-python.python:venv"
+  },
+  "defaultPackageManager": {
+    "workspaceFolderValue": "undefined",
+    "workspaceValue": "undefined",
+    "globalValue": "undefined",
+    "defaultValue": "ms-python.python:pip"
+  }
+}
+2026-07-22 11:59:23.843 [info] [pet] Starting Python Locator c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\python-env-tools\bin\pet.exe server
+2026-07-22 11:59:23.843 [info] Registering pyenv manager (environments will be discovered lazily)
+2026-07-22 11:59:23.843 [info] Registering pipenv manager (environments will be discovered lazily)
+2026-07-22 11:59:23.843 [info] Registering poetry manager (environments will be discovered lazily)
+2026-07-22 11:59:23.911 [info] [pet] configure: Sending configuration update: {"workspaceDirectories":["c:\\Users\\fahhh\\Desktop\\vscode\\HybridRide-master"],"environmentDirectories":["c:/Users/fahhh/Desktop/vscode/HybridRide-master/.venv","c:/Users/fahhh/Desktop/vscode/HybridRide-master/*/.venv"],"pipenvExecutable":"pipenv","poetryExecutable":"poetry","cacheDirectory":"c:\\Users\\fahhh\\AppData\\Roaming\\Code\\User\\globalStorage\\ms-python.vscode-python-envs\\pythonLocator"}
+2026-07-22 11:59:23.938 [error] [pet] [2m   0.583580300s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:23.945 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:23.962 [error] [pet] [2m   0.608687900s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   0.608766200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:23.969 [error] [pet] [2m   0.615986000s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   0.616062000s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:23.977 [error] [pet] [2m   0.623417500s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   0.623464500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.170 [info] Conda not found, turning off conda features. [Error: Conda not found
+	at L (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:629081)
+	at runNextTicks (node:internal/process/task_queues:65:5)
+	at process.processImmediate (node:internal/timers:472:9)
+	at async V (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:629206)
+	at async t.registerCondaFeatures (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:648591)
+	at async t.safeRegister (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:290365)
+	at async Promise.all (index 1)
+	at async Immediate.<anonymous> (c:\Users\fahhh\.vscode\extensions\ms-python.vscode-python-envs-1.36.0-win32-x64\dist\extension.js:2:782813)]
+2026-07-22 11:59:24.178 [info] [interpreterSelection] Applying initial environment selection for 1 workspace folder(s)
+2026-07-22 11:59:24.183 [info] Refreshing Pyenv Environments
+2026-07-22 11:59:24.183 [info] Refreshing pyenv environments
+2026-07-22 11:59:24.183 [info] Refreshing Pipenv Environments
+2026-07-22 11:59:24.183 [info] Refreshing pipenv environments
+2026-07-22 11:59:24.183 [info] Refreshing Poetry Environments
+2026-07-22 11:59:24.183 [info] Refreshing poetry environments
+2026-07-22 11:59:24.340 [error] [pet] [2m   0.982753100s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:24.352 [error] [pet] [2m   0.989808800s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:24.375 [error] [pet] [2m   1.010857600s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.020348500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:24.376 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:24.388 [error] [pet] [2m   1.031236300s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+
+2026-07-22 11:59:24.388 [error] [pet] [2m   1.034797500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:24.401 [error] [pet] [2m   1.047739200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+
+2026-07-22 11:59:24.402 [error] [pet] [2m   1.047844600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.485 [info] [SYS_SET] scope=c:\Users\fahhh\Desktop\vscode\HybridRide-master, project=c:\Users\fahhh\Desktop\vscode\HybridRide-master, normalizedKey=c:/users/fahhh/desktop/vscode/hybridride-master, env=Python 3.14.6-o89ncusfhe
+2026-07-22 11:59:24.522 [info] Python API: Changed environment from undefined to Python 3.14.6 for: c:\Users\fahhh\Desktop\vscode\HybridRide-master
+2026-07-22 11:59:24.522 [info] Internal: Changed environment from undefined to Python 3.14.6 for: c:\Users\fahhh\Desktop\vscode\HybridRide-master
+2026-07-22 11:59:24.523 [info] [interpreterSelection] HybridRide-master: Python 3.14.6 (source: autoDiscovery)
+2026-07-22 11:59:24.523 [info] [interpreterSelection] Workspace env resolved, deferring global scope to background
+2026-07-22 11:59:24.553 [error] [pet] [2m   1.174444200s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+[2m   1.189204600s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.192381100s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:24.555 [error] [pet] [2m   1.199866100s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.199910100s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:24.555 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:24.563 [error] [pet] [2m   1.209098500s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.209167600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.578 [info] Python API: Changed environment from undefined to Python 3.14.6 for: global
+2026-07-22 11:59:24.578 [info] Internal: Changed environment from undefined to Python 3.14.6 for: global
+2026-07-22 11:59:24.578 [info] [interpreterSelection] global: Python 3.14.6 (source: autoDiscovery)
+2026-07-22 11:59:24.590 [info] Refreshing pyenv environments
+2026-07-22 11:59:24.698 [error] [pet] [2m   1.344497600s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:24.698 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:24.706 [error] [pet] [2m   1.352716000s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.352774700s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:24.713 [error] [pet] [2m   1.359644800s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.359700900s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:24.719 [error] [pet] [2m   1.365920900s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.365994800s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.776 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:59:24.777 [info] Refreshing pipenv environments
+2026-07-22 11:59:24.797 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:59:24.798 [info] Found 0 pipenv environments
+2026-07-22 11:59:24.818 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:59:24.837 [error] [pet] [2m   1.484318100s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:24.839 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:24.854 [error] [pet] [2m   1.495994700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.496073900s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:24.855 [error] [pet] [2m   1.501659300s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.501708700s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:24.857 [info] Refreshing poetry environments
+2026-07-22 11:59:24.862 [error] [pet] [2m   1.508667100s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.508699200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.873 [info] Poetry executable not found
+2026-07-22 11:59:24.891 [info] Environment discovery complete: 1 environments found (Global: 1)
+2026-07-22 11:59:24.934 [error] [pet] [2m   1.580657600s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:24.952 [error] [pet] [2m   1.589059100s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.589102500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+[2m   1.593293700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.593328000s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+[2m   1.596502200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.596544500s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:24.953 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:25.022 [error] [pet] [2m   1.668708900s[0m [33m WARN[0m [2mpet_windows_registry::environments[0m[2m:[0m Failed to open HKLM\Software\Python, Os { code: 2, kind: NotFound, message: "The system cannot find the file specified." }
+
+2026-07-22 11:59:25.023 [info] Discovered env: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:25.029 [error] [pet] [2m   1.676389200s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.676451600s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python.exe.__target__"
+
+2026-07-22 11:59:25.034 [error] [pet] [2m   1.681322700s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.681361200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.14.exe.__target__"
+
+2026-07-22 11:59:25.039 [error] [pet] [2m   1.685840100s[0m [31mERROR[0m [2mpet_python_utils::env[0m[2m:[0m Failed to spawn Python to resolve info "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__": %1 is not a valid Win32 application. (os error 193)
+[2m   1.685878200s[0m [33m WARN[0m [2mpet::find[0m[2m:[0m Unknown Python Env "C:\\Users\\fahhh\\AppData\\Local\\Python\\bin\\python3.exe.__target__"
+
+2026-07-22 11:59:25.039 [info] Pipenv not found via settings, cache, or PATH
+2026-07-22 11:59:25.039 [info] Found 0 pipenv environments
+2026-07-22 11:59:25.111 [info] Poetry executable not found
+2026-07-22 11:59:29.001 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.021 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.036 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.051 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.069 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.471 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.494 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.504 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.516 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:29.522 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:58.353 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:58.363 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:58.369 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:58.376 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 11:59:58.384 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.721 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.732 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.741 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.751 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.759 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.767 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.776 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.783 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.790 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.796 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.808 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.815 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.824 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.830 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.838 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.847 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.856 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.863 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.871 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.883 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.895 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.903 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.910 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.916 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.925 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.933 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.941 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.947 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.956 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:01:51.963 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.842 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.848 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.855 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.862 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.868 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.875 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.881 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.886 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.892 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:24.896 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:08:25.144 [info] Running: uv --version
+2026-07-22 12:08:25.206 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m venv c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv
+2026-07-22 12:08:33.499 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:08:33.513 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:08:38.057 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:08:38.071 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:08:45.131 [info] Resolved Python Environment c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe
+2026-07-22 12:08:45.150 [info] Running: c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe -m pip install -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt
+2026-07-22 12:08:49.370 [info] python: Collecting bcrypt==5.0.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 1))
+
+2026-07-22 12:08:50.986 [info] python:   Downloading bcrypt-5.0.0-cp39-abi3-win_amd64.whl.metadata (10 kB)
+
+2026-07-22 12:08:51.361 [info] python: Collecting blinker==1.9.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 2))
+
+2026-07-22 12:08:51.672 [info] python:   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+
+2026-07-22 12:08:52.004 [info] python: Collecting click==8.4.1 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 3))
+
+2026-07-22 12:08:52.179 [info] python:   Downloading click-8.4.1-py3-none-any.whl.metadata (2.6 kB)
+
+2026-07-22 12:08:52.424 [info] python: Collecting Flask==3.1.3 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 4))
+
+2026-07-22 12:08:52.709 [info] python:   Downloading flask-3.1.3-py3-none-any.whl.metadata (3.2 kB)
+
+2026-07-22 12:08:53.008 [info] python: Collecting flask-cors==6.0.5 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 5))
+
+2026-07-22 12:08:53.235 [info] python:   Downloading flask_cors-6.0.5-py3-none-any.whl.metadata (5.4 kB)
+
+2026-07-22 12:08:53.628 [info] python: Collecting Flask-JWT-Extended==4.7.4 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 6))
+
+2026-07-22 12:08:54.213 [info] python:   Downloading flask_jwt_extended-4.7.4-py2.py3-none-any.whl.metadata (4.1 kB)
+
+2026-07-22 12:08:54.734 [info] python: Collecting gunicorn==26.0.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 7))
+
+2026-07-22 12:08:55.498 [info] python:   Downloading gunicorn-26.0.0-py3-none-any.whl.metadata (5.4 kB)
+
+2026-07-22 12:08:55.875 [info] python: Collecting itsdangerous==2.2.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 8))
+
+2026-07-22 12:08:56.019 [info] python:   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+
+2026-07-22 12:08:56.500 [info] python: Collecting Jinja2==3.1.6 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 9))
+
+2026-07-22 12:08:56.670 [info] python:   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+
+2026-07-22 12:08:57.210 [info] python: Collecting MarkupSafe==3.0.3 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 10))
+
+2026-07-22 12:08:57.416 [info] python:   Downloading markupsafe-3.0.3-cp314-cp314-win_amd64.whl.metadata (2.8 kB)
+
+2026-07-22 12:08:59.304 [info] python: Collecting numpy==2.4.6 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 11))
+
+2026-07-22 12:08:59.509 [info] python:   Downloading numpy-2.4.6-cp314-cp314-win_amd64.whl.metadata (6.6 kB)
+
+2026-07-22 12:08:59.896 [info] python: Collecting packaging==26.2 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 12))
+
+2026-07-22 12:09:00.059 [info] python:   Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+
+2026-07-22 12:09:00.814 [info] python: Collecting pandas==3.0.3 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 13))
+
+2026-07-22 12:09:00.992 [info] python:   Downloading pandas-3.0.3-cp314-cp314-win_amd64.whl.metadata (19 kB)
+
+2026-07-22 12:09:01.713 [info] python: Collecting psycopg2-binary==2.9.12 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 14))
+
+2026-07-22 12:09:01.879 [info] python:   Downloading psycopg2_binary-2.9.12-cp314-cp314-win_amd64.whl.metadata (5.1 kB)
+
+2026-07-22 12:09:02.253 [info] python: Collecting PyJWT==2.13.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 15))
+
+2026-07-22 12:09:02.416 [info] python:   Downloading pyjwt-2.13.0-py3-none-any.whl.metadata (3.4 kB)
+
+2026-07-22 12:09:02.710 [info] python: Collecting python-dateutil==2.9.0.post0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 16))
+
+2026-07-22 12:09:02.928 [info] python:   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+
+2026-07-22 12:09:03.308 [info] python: Collecting python-dotenv==1.2.2 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 17))
+
+2026-07-22 12:09:03.485 [info] python:   Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+
+2026-07-22 12:09:03.827 [info] python: Collecting six==1.17.0 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 18))
+
+2026-07-22 12:09:04.127 [info] python:   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+
+2026-07-22 12:09:04.403 [info] python: Collecting Werkzeug==3.1.8 (from -r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 19))
+
+2026-07-22 12:09:04.552 [info] python:   Downloading werkzeug-3.1.8-py3-none-any.whl.metadata (4.0 kB)
+
+2026-07-22 12:09:04.834 [info] python: Collecting colorama (from click==8.4.1->-r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 3))
+
+2026-07-22 12:09:05.093 [info] python:   Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+
+2026-07-22 12:09:05.460 [info] python: Collecting tzdata (from pandas==3.0.3->-r c:\Users\fahhh\Desktop\vscode\HybridRide-master\backend\requirements.txt (line 13))
+2026-07-22 12:09:05.460 [info] python: 
+
+2026-07-22 12:09:05.617 [info] python:   Downloading tzdata-2026.3-py2.py3-none-any.whl.metadata (1.4 kB)
+
+2026-07-22 12:09:05.826 [info] python: Downloading bcrypt-5.0.0-cp39-abi3-win_amd64.whl (150 kB)
+
+2026-07-22 12:09:06.435 [info] python: Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+
+2026-07-22 12:09:06.671 [info] python: Downloading click-8.4.1-py3-none-any.whl (116 kB)
+
+2026-07-22 12:09:07.031 [info] python: Downloading flask-3.1.3-py3-none-any.whl (103 kB)
+
+2026-07-22 12:09:07.318 [info] python: Downloading flask_cors-6.0.5-py3-none-any.whl (16 kB)
+
+2026-07-22 12:09:07.513 [info] python: Downloading flask_jwt_extended-4.7.4-py2.py3-none-any.whl (22 kB)
+
+2026-07-22 12:09:07.663 [info] python: Downloading pyjwt-2.13.0-py3-none-any.whl (31 kB)
+
+2026-07-22 12:09:07.997 [info] python: Downloading gunicorn-26.0.0-py3-none-any.whl (212 kB)
+
+2026-07-22 12:09:08.192 [info] python: Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+
+2026-07-22 12:09:08.416 [info] python: Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+
+2026-07-22 12:09:08.720 [info] python: Downloading markupsafe-3.0.3-cp314-cp314-win_amd64.whl (15 kB)
+
+2026-07-22 12:09:09.060 [info] python: Downloading numpy-2.4.6-cp314-cp314-win_amd64.whl (12.5 MB)
+
+2026-07-22 12:09:18.979 [info] python:    
+2026-07-22 12:09:18.979 [info] python: ---------------------------------------- 12.5/12.5 MB 1.3 MB/s  0:00:09
+2026-07-22 12:09:18.980 [info] python: 
+
+2026-07-22 12:09:19.131 [info] python: Downloading packaging-26.2-py3-none-any.whl (100 kB)
+
+2026-07-22 12:09:19.614 [info] python: Downloading pandas-3.0.3-cp314-cp314-win_amd64.whl (9.9 MB)
+
+2026-07-22 12:09:26.684 [info] python:    ---------------------------------------- 9.9/9.9 MB 1.4 MB/s  0:00:07
+2026-07-22 12:09:26.684 [info] python: 
+
+2026-07-22 12:09:26.841 [info] python: Downloading psycopg2_binary-2.9.12-cp314-cp314-win_amd64.whl (2.8 MB)
+
+2026-07-22 12:09:27.907 [info] python:    ---------------------------------------- 2.8/2.8 MB 3.3 MB/s  
+2026-07-22 12:09:27.907 [info] python: 0:00:01
+
+2026-07-22 12:09:28.177 [info] python: Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+
+2026-07-22 12:09:28.574 [info] python: Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+
+2026-07-22 12:09:28.825 [info] python: Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+
+2026-07-22 12:09:29.144 [info] python: Downloading werkzeug-3.1.8-py3-none-any.whl (226 kB)
+
+2026-07-22 12:09:29.348 [info] python: Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+
+2026-07-22 12:09:29.593 [info] python: Downloading tzdata-2026.3-py2.py3-none-any.whl (348 kB)
+
+2026-07-22 12:09:30.561 [info] python: Installing collected packages: tzdata, six, python-dotenv, PyJWT, psycopg2-binary, packaging, numpy, MarkupSafe, itsdangerous, colorama, blinker, bcrypt, Werkzeug, python-dateutil, Jinja2, gunicorn, click, pandas, Flask, Flask-JWT-Extended, flask-cors
+
+2026-07-22 12:09:32.677 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:32.683 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:33.221 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:33.227 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:33.279 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:33.292 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:33.951 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:33.964 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:35.465 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:35.470 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:36.076 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:36.086 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:46.818 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:46.824 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:47.338 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:47.343 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:47.517 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:47.519 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:48.106 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:48.164 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:48.904 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:48.911 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:49.523 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:49.524 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:49.580 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:49.586 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:50.235 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:50.250 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:50.776 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:50.784 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:51.358 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:51.358 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:53.041 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:53.047 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:53.785 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:53.811 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:54.998 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:09:55.009 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:09:55.016 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:09:55.032 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:09:55.040 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:09:56.562 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:09:56.568 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:09:56.963 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:09:56.963 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:10:33.148 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:10:33.153 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:10:33.408 [info] python: 
+
+2026-07-22 12:10:33.415 [info] python: Successfully installed Flask-3.1.3 Flask-JWT-Extended-4.7.4 Jinja2-3.1.6 MarkupSafe-3.0.3 PyJWT-2.13.0 Werkzeug-3.1.8 bcrypt-5.0.0 blinker-1.9.0 click-8.4.1 colorama-0.4.6 flask-cors-6.0.5 gunicorn-26.0.0 itsdangerous-2.2.0 numpy-2.4.6 packaging-26.2 pandas-3.0.3 psycopg2-binary-2.9.12 python-dateutil-2.9.0.post0 python-dotenv-1.2.2 six-1.17.0 tzdata-2026.3
+
+2026-07-22 12:10:33.710 [info] Running: c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe -m pip list --format=json
+2026-07-22 12:10:33.721 [info] Running: c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe -m pip list --format=json --not-required
+2026-07-22 12:10:33.762 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:10:33.766 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:10:33.931 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json
+2026-07-22 12:10:33.937 [info] Running: C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe -m pip list --format=json --not-required
+2026-07-22 12:10:34.797 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:10:34.839 [info] python: [{"name": "pip", "version": "26.1.2"}]
+
+2026-07-22 12:10:34.896 [info] python: [{"name": "bcrypt", "version": "5.0.0"}, {"name": "blinker", "version": "1.9.0"}, {"name": "click", "version": "8.4.1"}, {"name": "colorama", "version": "0.4.6"}, {"name": "Flask", "version": "3.1.3"}, {"name": "flask-cors", "version": "6.0.5"}, {"name": "Flask-JWT-Extended", "version": "4.7.4"}, {"name": "gunicorn", "version": "26.0.0"}, {"name": "itsdangerous", "version": "2.2.0"}, {"name": "Jinja2", "version": "3.1.6"}, {"name": "MarkupSafe", "version": "3.0.3"}, {"name": "numpy", "version": "2.4.6"}, {"name": "packaging", "version": "26.2"}, {"name": "pandas", "version": "3.0.3"}, {"name": "pip", "version": "26.1.2"}, {"name": "psycopg2-binary", "version": "2.9.12"}, {"name": "PyJWT", "version": "2.13.0"}, {"name": "python-dateutil", "version": "2.9.0.post0"}, {"name": "python-dotenv", "version": "1.2.2"}, {"name": "six", "version": "1.17.0"}, {"name": "tzdata", "version": "2026.3"}, {"name": "Werkzeug", "version": "3.1.8"}]
+
+2026-07-22 12:10:34.901 [info] python: [{"name": "bcrypt", "version": "5.0.0"}, {"name": "flask-cors", "version": "6.0.5"}, {"name": "Flask-JWT-Extended", "version": "4.7.4"}, {"name": "gunicorn", "version": "26.0.0"}, {"name": "pandas", "version": "3.0.3"}, {"name": "pip", "version": "26.1.2"}, {"name": "psycopg2-binary", "version": "2.9.12"}, {"name": "python-dotenv", "version": "1.2.2"}]
+
+2026-07-22 12:10:35.074 [info] Python API: Changed environment from Python 3.14.6 to .venv (3.14.6.final.0) for: c:\Users\fahhh\Desktop\vscode\HybridRide-master
+2026-07-22 12:10:35.074 [info] Internal: Changed environment from Python 3.14.6 to .venv (3.14.6.final.0) for: c:\Users\fahhh\Desktop\vscode\HybridRide-master
+2026-07-22 12:10:35.986 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:36.000 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:36.016 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:36.026 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:36.036 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:40.212 [info] Resolved Python Environment c:\Users\fahhh\AppData\Local\Python\PYTHONCORE-3.14-64\python.exe
+2026-07-22 12:10:40.221 [info] Resolved Python Environment c:\Users\fahhh\AppData\Local\Python\PYTHONCORE-3.14-64\python.exe
+2026-07-22 12:10:40.230 [info] Resolved Python Environment c:\Users\fahhh\AppData\Local\Python\PYTHONCORE-3.14-64\python.exe
+2026-07-22 12:10:40.238 [info] Resolved Python Environment c:\Users\fahhh\AppData\Local\Python\PYTHONCORE-3.14-64\python.exe
+2026-07-22 12:10:40.246 [info] Resolved Python Environment c:\Users\fahhh\AppData\Local\Python\PYTHONCORE-3.14-64\python.exe
+2026-07-22 12:10:49.617 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:49.622 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:49.628 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:49.634 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:10:49.639 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:00.272 [info] Running: c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+2026-07-22 12:11:01.292 [info] python: ERROR: Could not open requirements file: [Errno 2] No such file or directory: ' backend/requirements.txt'
+2026-07-22 12:11:01.292 [info] python: 
+
+2026-07-22 12:11:01.416 [error] Error managing packages Failed to run python -m pip install -r backend/requirements.txt
+2026-07-22 12:11:22.723 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:22.728 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:22.734 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:22.745 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:22.751 [info] Resolved Python Environment C:\Users\fahhh\AppData\Local\Python\pythoncore-3.14-64\python.exe
+2026-07-22 12:11:22.768 [info] Running: c:\Users\fahhh\Desktop\vscode\HybridRide-master\.venv\Scripts\python.exe -m pip install -r requirements.txt
+2026-07-22 12:11:23.715 [info] python: ERROR: Could not open requirements file: [Errno 2] No such file or directory: 'requirements.txt'
+
+2026-07-22 12:11:23.844 [error] Error managing packages Failed to run python -m pip install -r requirements.txt

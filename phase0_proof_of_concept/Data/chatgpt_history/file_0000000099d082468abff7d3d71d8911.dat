@@ -1,0 +1,215 @@
+At line:1 char:105
++ ... older\venv\Lib\site-packages\nltk\__init__.py", line 142, in <module>
++                                                                  ~
+The '<' operator is reserved for future use.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : RedirectionNotSupported
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder>     from nltk.text import *
+At line:1 char:5
++     from nltk.text import *
++     ~~~~
+The 'from' keyword is not supported in this version of the language.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : ReservedKeywordNotAllowed
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder>   File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\text.py", line 24, in <module>
+At line:1 char:100
++ ... New folder\venv\Lib\site-packages\nltk\text.py", line 24, in <module>
++                                                                  ~
+The '<' operator is reserved for future use.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : RedirectionNotSupported
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder>     import regex
+import : The term 'import' is not recognized as the name of a cmdlet, function, script file, 
+or operable program. Check the spelling of the name, or if a path was included, verify that 
+the path is correct and try again.
+At line:1 char:5
++     import regex
++     ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (import:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder>   File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\inisec.py", line 128, in find_spec
+File : The term 'File' is not recognized as the name of a cmdlet, function, script file, or 
+operable program. Check the spelling of the name, or if a path was included, verify that the 
+path is correct and try again.
+At line:1 char:3
++   File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packag ...
++   ~~~~
+    + CategoryInfo          : ObjectNotFound: (File:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder>     raise ImportError(
+>>     ...<3 lines>...
+>>     )
+...<3 : The term '...<3' is not recognized as the name of a cmdlet, function, script file, or 
+operable program. Check the spelling of the name, or if a path was included, verify that the 
+path is correct and try again.
+At line:2 char:5
++     ...<3 lines>...
++     ~~~~~
+    + CategoryInfo          : ObjectNotFound: (...<3:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> ImportError: Blocked import of regex from current working directory for security reasons. Use '-P' or set PYTHONSAFEPATH to prevent Python from searching the current working directory.
+ImportError: : The term 'ImportError:' is not recognized as the name of a cmdlet, function, 
+script file, or operable program. Check the spelling of the name, or if a path was included, 
+verify that the path is correct and try again.
+At line:1 char:1
++ ImportError: Blocked import of regex from current working directory f ...
++ ~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (ImportError::String) [], CommandNotFoundExcept 
+   ion
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> (venv) PS C:\Users\fahhh\Desktop\vscode\New folder> $env:PYTHONSAFEPATH = "1"
+At line:1 char:8
++ (venv) PS C:\Users\fahhh\Desktop\vscode\New folder> $env:PYTHONSAFEPA ...
++        ~~
+Unexpected token 'PS' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> 
+ *  History restored 
+
+PS C:\Users\fahhh\Desktop\vscode\New folder> (Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned) ; (& "c:\Users\fahhh\Desktop\vscode\New folder\venv\Scripts\Activate.ps1")
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> $env:PYTHONSAFEPATH = "1"
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> python your_script_name.py
+C:\Users\fahhh\Desktop\vscode\New folder\venv\Scripts\python.exe: can't open file 'C:\\Users\\fahhh\\Desktop\\vscode\\New folder\\your_script_name.py': [Errno 2] No such file or directory
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> Get-ChildItem
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+d-----          8/4/2026  10:27 PM                venv                                        
+-a----          8/4/2026  10:25 PM         161193 spam-det-lab-nb-lr-svm.ipynb                
+
+
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')
+    ^^^^^^^^^^^
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\__init__.py", line 142, in <module>
+    from nltk.text import *
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\text.py", line 24, in <module>
+    import regex
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\inisec.py", line 128, in find_spec
+    raise ImportError(
+    ...<3 lines>...
+    )
+ImportError: Blocked import of regex from current working directory for security reasons. Use '-P' or set PYTHONSAFEPATH to prevent Python from searching the current working directory.
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> python -P -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')
+    ^^^^^^^^^^^
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\__init__.py", line 142, in <module>
+    from nltk.text import *
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\text.py", line 24, in <module>
+    import regex
+  File "C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\inisec.py", line 128, in find_spec
+    raise ImportError(
+    ...<3 lines>...
+    )
+ImportError: Blocked import of regex from current working directory for security reasons. Use '-P' or set PYTHONSAFEPATH to prevent Python from searching the current working directory.
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> Get-ChildItem -Force
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+d-----          8/4/2026  10:27 PM                venv                                        
+-a----          8/4/2026  10:25 PM         161193 spam-det-lab-nb-lr-svm.ipynb                
+
+
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> Get-ChildItem -Recurse -Filter regex*
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+d-----          8/4/2026  10:27 PM                regex                                       
+d-----          8/4/2026  10:27 PM                regex-2026.7.19.dist-info                   
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\chunk
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM          55105 regexp.py                                   
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New 
+    folder\venv\Lib\site-packages\nltk\chunk\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM          56707 regexp.cpython-314.pyc                      
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\stem
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM           1521 regexp.py                                   
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New 
+    folder\venv\Lib\site-packages\nltk\stem\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM           2066 regexp.cpython-314.pyc                      
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New folder\venv\Lib\site-packages\nltk\tokenize
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM           8111 regexp.py                                   
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New 
+    folder\venv\Lib\site-packages\nltk\tokenize\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:28 PM           9931 regexp.cpython-314.pyc                      
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New 
+    folder\venv\Lib\site-packages\pip\_vendor\pygments
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:26 PM           3308 regexopt.py                                 
+
+
+    Directory: C:\Users\fahhh\Desktop\vscode\New 
+    folder\venv\Lib\site-packages\pip\_vendor\pygments\__pycache__
+
+
+Mode                 LastWriteTime         Length Name                                        
+----                 -------------         ------ ----                                        
+-a----          8/4/2026  10:27 PM           4767 regexopt.cpython-314.pyc                    
+
+
+(venv) PS C:\Users\fahhh\Desktop\vscode\New folder> 

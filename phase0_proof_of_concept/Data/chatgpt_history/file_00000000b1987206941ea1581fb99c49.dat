@@ -1,0 +1,474 @@
+import pandas as pd
+from flask import Flask, jsonify
+from flask import request
+from db import get_connection
+
+app = Flask(__name__)
+
+@app.route('/drivers', methods=['POST'])
+def add_driver():
+    data = request.get_json(silent=True)              # grab the JSON data sent by the client
+
+    if data is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    name = data.get('name')
+    phone = data.get('phone')
+    vehicle_info = data.get('vehicle_info')
+
+    if not name or not phone or not vehicle_info:
+        return jsonify({"error": "name, phone, and vehicle_info are required"}), 400
+
+    conn = get_connection()                # open db connection, same as before
+    cur = conn.cursor()
+
+    cur.execute(
+        "INSERT INTO drivers (name, phone, vehicle_info, subscription_status) VALUES (%s, %s, %s, %s)",
+        (name, phone, vehicle_info, 'active')
+    )
+
+    conn.commit()                          # save the change permanently to the database
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Driver added successfully"}), 201
+
+
+@app.route('/drivers', methods=['GET'])
+def get_drivers():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone, vehicle_info, subscription_status FROM drivers")
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    drivers = []
+    for row in rows:
+        drivers.append({
+            "id": row[0],
+            "name": row[1],
+            "phone": row[2],
+            "vehicle_info": row[3],
+            "subscription_status": row[4]
+        })
+
+    return jsonify(drivers), 200
+
+@app.route('/drivers/<int:driver_id>', methods=['GET'])
+def get_driver_by_id(driver_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone, vehicle_info, subscription_status FROM drivers WHERE id = %s", (driver_id,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return jsonify({"error": "Driver not found"}), 404
+
+    driver = {
+        "id": row[0],
+        "name": row[1],
+        "phone": row[2],
+        "vehicle_info": row[3],
+        "subscription_status": row[4]
+    }
+
+    return jsonify(driver), 200
+
+@app.route('/drivers/search', methods=['GET'])
+def search_driver_by_name():
+    name = request.args.get('name')
+
+    if not name:
+        return jsonify({"error": "Please provide a name to search"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone, vehicle_info, subscription_status FROM drivers WHERE name ILIKE %s", (f"%{name}%",))
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    drivers = []
+    for row in rows:
+        drivers.append({
+            "id": row[0],
+            "name": row[1],
+            "phone": row[2],
+            "vehicle_info": row[3],
+            "subscription_status": row[4]
+        })
+
+    return jsonify(drivers), 200
+
+@app.route('/drivers/<int:driver_id>', methods=['PUT'])
+def update_driver(driver_id):
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    name = data.get('name')
+    phone = data.get('phone')
+    vehicle_info = data.get('vehicle_info')
+
+    if not name or not phone or not vehicle_info:
+        return jsonify({"error": "name, phone, and vehicle_info are required"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "UPDATE drivers SET name = %s, phone = %s, vehicle_info = %s WHERE id = %s",
+        (name, phone, vehicle_info, driver_id)
+    )
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Driver not found"}), 404
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Driver updated successfully"}), 200
+
+@app.route('/drivers/<int:driver_id>', methods=['DELETE'])
+def delete_driver(driver_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM drivers WHERE id = %s", (driver_id,))
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Driver not found"}), 404
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Driver deleted successfully"}), 200
+
+@app.route('/riders', methods=['POST'])
+def add_rider():
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    name = data.get('name')
+    phone = data.get('phone')
+
+    if not name or not phone:
+        return jsonify({"error": "name and phone are required"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            "INSERT INTO riders (name, phone) VALUES (%s, %s)",
+            (name, phone)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Rider added successfully"}), 201
+
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": "A rider with this phone number already exists"}), 400
+
+@app.route('/riders', methods=['GET'])
+def get_riders():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone FROM riders")
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    riders = []
+    for row in rows:
+        riders.append({
+            "id": row[0],
+            "name": row[1],
+            "phone": row[2]
+        })
+
+    return jsonify(riders), 200
+
+
+@app.route('/riders/<int:rider_id>', methods=['GET'])
+def get_rider_by_id(rider_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone FROM riders WHERE id = %s", (rider_id,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return jsonify({"error": "Rider not found"}), 404
+
+    rider = {
+        "id": row[0],
+        "name": row[1],
+        "phone": row[2]
+    }
+
+    return jsonify(rider), 200
+
+
+@app.route('/riders/search', methods=['GET'])
+def search_rider_by_name():
+    name = request.args.get('name')
+
+    if not name:
+        return jsonify({"error": "Please provide a name to search"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, name, phone FROM riders WHERE name ILIKE %s", (f"%{name}%",))
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    riders = []
+    for row in rows:
+        riders.append({
+            "id": row[0],
+            "name": row[1],
+            "phone": row[2]
+        })
+
+    return jsonify(riders), 200
+
+
+@app.route('/riders/<int:rider_id>', methods=['PUT'])
+def update_rider(rider_id):
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    name = data.get('name')
+    phone = data.get('phone')
+
+    if not name or not phone:
+        return jsonify({"error": "name and phone are required"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "UPDATE riders SET name = %s, phone = %s WHERE id = %s",
+        (name, phone, rider_id)
+    )
+
+    if cur.rowcount == 0:
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Rider not found"}), 404
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Rider updated successfully"}), 200
+
+
+@app.route('/riders/<int:rider_id>', methods=['DELETE'])
+def delete_rider(rider_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("DELETE FROM riders WHERE id = %s", (rider_id,))
+
+        if cur.rowcount == 0:
+            cur.close()
+            conn.close()
+            return jsonify({"error": "Rider not found"}), 404
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Rider deleted successfully"}), 200
+
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": "This rider has trip history and cannot be deleted"}), 400
+
+@app.route('/trips', methods=['POST'])
+def create_trip():
+    data = request.get_json(silent=True)
+
+    if data is None:
+        return jsonify({"error": "Request body must be JSON"}), 400
+
+    rider_id = data.get('rider_id')
+    pickup_location = data.get('pickup_location')
+    dropoff_location = data.get('dropoff_location')
+
+    if not rider_id or not pickup_location or not dropoff_location:
+        return jsonify({"error": "rider_id, pickup_location, and dropoff_location are required"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            "INSERT INTO trips (rider_id, pickup_location, dropoff_location, status) VALUES (%s, %s, %s, %s)",
+            (rider_id, pickup_location, dropoff_location, 'requested')
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Trip created successfully"}), 201
+
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Could not create trip, check that rider_id exists"}), 400
+
+
+@app.route('/trips', methods=['GET'])
+def get_trips():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, rider_id, driver_id, pickup_location, dropoff_location, status, requested_at FROM trips")
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    trips = []
+    for row in rows:
+        trips.append({
+            "id": row[0],
+            "rider_id": row[1],
+            "driver_id": row[2],
+            "pickup_location": row[3],
+            "dropoff_location": row[4],
+            "status": row[5],
+            "requested_at": row[6].isoformat() if row[6] else None
+        })
+
+    return jsonify(trips), 200
+
+
+@app.route('/trips/<int:trip_id>', methods=['GET'])
+def get_trip_by_id(trip_id):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, rider_id, driver_id, pickup_location, dropoff_location, status, requested_at FROM trips WHERE id = %s", (trip_id,))
+    row = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    if row is None:
+        return jsonify({"error": "Trip not found"}), 404
+
+    trip = {
+        "id": row[0],
+        "rider_id": row[1],
+        "driver_id": row[2],
+        "pickup_location": row[3],
+        "dropoff_location": row[4],
+        "status": row[5],
+        "requested_at": row[6].isoformat() if row[6] else None
+    }
+
+    return jsonify(trip), 200
+
+
+@app.route('/trips/<int:trip_id>/assign', methods=['PUT'])
+def assign_driver(trip_id):
+    data = request.get_json(silent=True)
+
+    if data is None or not data.get('driver_id'):
+        return jsonify({"error": "driver_id is required"}), 400
+
+    driver_id = data.get('driver_id')
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute(
+            "UPDATE trips SET driver_id = %s, status = 'accepted' WHERE id = %s",
+            (driver_id, trip_id)
+        )
+
+        if cur.rowcount == 0:
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return jsonify({"error": "Trip not found"}), 404
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"message": "Driver assigned successfully"}), 200
+
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Could not assign driver, check that driver_id exists"}), 400
+
+
+@app.route('/trips/<int:trip_id>/status', methods=['PUT'])
+def update_trip_status(trip_id):
+    data = request.get_json(silent=True)
+    new_status = data.get('status') if data else None
+
+    allowed_statuses = ['requested', 'accepted', 'completed', 'cancelled']
+
+    if not new_status or new_status not in allowed_statuses:
+        return jsonify({"error": f"status must be one of {allowed_statuses}"}), 400
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("UPDATE trips SET status = %s WHERE id = %s", (new_status, trip_id))
+
+    if cur.rowcount == 0:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return jsonify({"error": "Trip not found"}), 404
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"message": "Trip status updated successfully"}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)

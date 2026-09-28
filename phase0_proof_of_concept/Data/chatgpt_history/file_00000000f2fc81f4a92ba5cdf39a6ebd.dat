@@ -1,0 +1,217 @@
+PS C:\Users\fahhh\Desktop\vscode\E_commerceInventory&PerformanceAnalyticsSystem> python -m venv .venv
+PS C:\Users\fahhh\Desktop\vscode\E_commerceInventory&PerformanceAnalyticsSystem> .\.venv\Scripts\Activate.ps1
+(.venv) PS C:\Users\fahhh\Desktop\vscode\E_commerceInventory&PerformanceAnalyticsSystem> python -m pip install --upgrade pip
+Requirement already satisfied: pip in .\.venv\Lib\site-packages (26.1.2)
+(.venv) PS C:\Users\fahhh\Desktop\vscode\E_commerceInventory&PerformanceAnalyticsSystem> pip install streamlit pandas numpy matplotlib plotly scikit-learn psycopg2-binary faker
+Collecting streamlit
+  Using cached streamlit-1.60.0-py3-none-any.whl.metadata (10 kB)
+Collecting pandas
+  Using cached pandas-3.0.5-cp314-cp314-win_amd64.whl.metadata (19 kB)
+Collecting numpy
+  Using cached numpy-2.5.1-cp314-cp314-win_amd64.whl.metadata (6.6 kB)
+Collecting matplotlib
+  Downloading matplotlib-3.11.1-cp314-cp314-win_amd64.whl.metadata (80 kB)
+Collecting plotly
+  Downloading plotly-6.9.0-py3-none-any.whl.metadata (9.0 kB)
+Collecting scikit-learn
+  Downloading scikit_learn-1.9.0-cp314-cp314-win_amd64.whl.metadata (11 kB)
+Collecting psycopg2-binary
+  Using cached psycopg2_binary-2.9.12-cp314-cp314-win_amd64.whl.metadata (5.1 kB)
+Collecting faker
+  Downloading faker-40.36.0-py3-none-any.whl.metadata (16 kB)
+Collecting altair!=5.4.0,!=5.4.1,<7,>=4.0 (from streamlit)
+  Using cached altair-6.2.2-py3-none-any.whl.metadata (11 kB)
+Collecting blinker<2,>=1.5.0 (from streamlit)
+  Using cached blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting click<9,>=7.0 (from streamlit)
+  Using cached click-8.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting gitpython!=3.1.19,<4,>=3.0.7 (from streamlit)
+  Using cached gitpython-3.1.57-py3-none-any.whl.metadata (13 kB)
+Collecting packaging>=20 (from streamlit)
+  Using cached packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting pillow<13,>=7.1.0 (from streamlit)
+  Using cached pillow-12.3.0-cp314-cp314-win_amd64.whl.metadata (9.3 kB)
+Collecting pydeck<1,>=0.8.0b4 (from streamlit)
+  Using cached pydeck-0.9.3-py2.py3-none-any.whl.metadata (4.2 kB)
+Collecting protobuf<8,>=3.20 (from streamlit)
+  Using cached protobuf-7.35.1-cp310-abi3-win_amd64.whl.metadata (595 bytes)
+Collecting pyarrow<25,>=7.0 (from streamlit)
+  Using cached pyarrow-24.0.0-cp314-cp314-win_amd64.whl.metadata (3.0 kB)
+Collecting requests<3,>=2.27 (from streamlit)
+  Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting tenacity<10,>=8.1.0 (from streamlit)
+  Using cached tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+Collecting toml<2,>=0.10.1 (from streamlit)
+  Using cached toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+Collecting typing-extensions<5,>=4.10.0 (from streamlit)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting starlette<2,>=0.40.0 (from streamlit)
+  Using cached starlette-1.3.1-py3-none-any.whl.metadata (6.4 kB)
+Collecting uvicorn<1,>=0.30.0 (from streamlit)
+  Using cached uvicorn-0.51.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting httptools<1,>=0.6.3 (from streamlit)
+  Using cached httptools-0.8.0-cp314-cp314-win_amd64.whl.metadata (3.7 kB)
+Collecting anyio<5,>=4.0.0 (from streamlit)
+  Using cached anyio-4.14.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting python-multipart<1,>=0.0.10 (from streamlit)
+  Using cached python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+Collecting websockets<17,>=12.0.0 (from streamlit)
+  Using cached websockets-16.1.1-cp314-cp314-win_amd64.whl.metadata (7.0 kB)
+Collecting itsdangerous<3,>=2.1.2 (from streamlit)
+  Using cached itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting watchdog<7,>=2.1.5 (from streamlit)
+  Using cached watchdog-6.0.0-py3-none-win_amd64.whl.metadata (44 kB)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting tzdata (from pandas)
+  Using cached tzdata-2026.3-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting jinja2 (from altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting jsonschema>=3.0 (from altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting narwhals>=2.4.0 (from altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached narwhals-2.24.0-py3-none-any.whl.metadata (15 kB)
+Collecting idna>=2.8 (from anyio<5,>=4.0.0->streamlit)
+  Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting colorama (from click<9,>=7.0->streamlit)
+  Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting gitdb<5,>=4.0.1 (from gitpython!=3.1.19,<4,>=3.0.7->streamlit)
+  Using cached gitdb-4.0.12-py3-none-any.whl.metadata (1.2 kB)
+Collecting smmap<6,>=3.0.1 (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit)
+  Using cached smmap-5.0.3-py3-none-any.whl.metadata (4.6 kB)
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.27->streamlit)
+  Using cached charset_normalizer-3.4.9-cp314-cp314-win_amd64.whl.metadata (42 kB)
+Collecting urllib3<3,>=1.26 (from requests<3,>=2.27->streamlit)
+  Using cached urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2023.5.7 (from requests<3,>=2.27->streamlit)
+  Using cached certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting h11>=0.8 (from uvicorn<1,>=0.30.0->streamlit)
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting contourpy>=1.0.1 (from matplotlib)
+  Downloading contourpy-1.3.3-cp314-cp314-win_amd64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib)
+  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.28.2 (from matplotlib)
+  Downloading fonttools-4.63.0-cp314-cp314-win_amd64.whl.metadata (121 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib)
+  Downloading kiwisolver-1.5.0-cp314-cp314-win_amd64.whl.metadata (5.2 kB)
+Collecting pyparsing>=3 (from matplotlib)
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting scipy>=1.10.0 (from scikit-learn)
+  Downloading scipy-1.18.0-cp314-cp314-win_amd64.whl.metadata (61 kB)
+Collecting joblib>=1.4.0 (from scikit-learn)
+  Downloading joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
+Collecting threadpoolctl>=3.5.0 (from scikit-learn)
+  Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='pypi.org', port=443): Read timed out. (read timeout=15)")': /simple/markupsafe/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ReadTimeoutError("HTTPSConnectionPool(host='pypi.org', port=443): Read timed out. (read timeout=15)")': /simple/markupsafe/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<HTTPSConnection(host='pypi.org', port=443) at 0x1b974fbd310>, 'Connection to pypi.org timed out. (connect timeout=15)')': /simple/markupsafe/
+Collecting MarkupSafe>=2.0 (from jinja2->altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached markupsafe-3.0.3-cp314-cp314-win_amd64.whl.metadata (2.8 kB)
+Collecting attrs>=22.2.0 (from jsonschema>=3.0->altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=3.0->altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=3.0->altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=3.0->altair!=5.4.0,!=5.4.1,<7,>=4.0->streamlit)
+  Using cached rpds_py-2026.6.3-cp314-cp314-win_amd64.whl.metadata (4.2 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas)
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Using cached streamlit-1.60.0-py3-none-any.whl (10.4 MB)
+Using cached pandas-3.0.5-cp314-cp314-win_amd64.whl (10.0 MB)
+Using cached numpy-2.5.1-cp314-cp314-win_amd64.whl (12.6 MB)
+Using cached altair-6.2.2-py3-none-any.whl (797 kB)
+Using cached anyio-4.14.2-py3-none-any.whl (125 kB)
+Using cached blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Using cached click-8.4.2-py3-none-any.whl (119 kB)
+Using cached gitpython-3.1.57-py3-none-any.whl (217 kB)
+Using cached gitdb-4.0.12-py3-none-any.whl (62 kB)
+Using cached httptools-0.8.0-cp314-cp314-win_amd64.whl (92 kB)
+Using cached itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Using cached pillow-12.3.0-cp314-cp314-win_amd64.whl (7.2 MB)
+Using cached protobuf-7.35.1-cp310-abi3-win_amd64.whl (439 kB)
+Using cached pyarrow-24.0.0-cp314-cp314-win_amd64.whl (28.0 MB)
+Using cached pydeck-0.9.3-py2.py3-none-any.whl (11.4 MB)
+Using cached python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Using cached requests-2.34.2-py3-none-any.whl (73 kB)
+Using cached charset_normalizer-3.4.9-cp314-cp314-win_amd64.whl (162 kB)
+Using cached idna-3.18-py3-none-any.whl (65 kB)
+Using cached smmap-5.0.3-py3-none-any.whl (24 kB)
+Using cached starlette-1.3.1-py3-none-any.whl (73 kB)
+Using cached tenacity-9.1.4-py3-none-any.whl (28 kB)
+Using cached toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached urllib3-2.7.0-py3-none-any.whl (131 kB)
+Using cached uvicorn-0.51.0-py3-none-any.whl (73 kB)
+Using cached watchdog-6.0.0-py3-none-win_amd64.whl (79 kB)
+Using cached websockets-16.1.1-cp314-cp314-win_amd64.whl (179 kB)
+Downloading matplotlib-3.11.1-cp314-cp314-win_amd64.whl (9.5 MB)
+   ━━━━━━━━━━━━━╺━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/9.5 MB 1.7 MB/s eta 0:00:04
+WARNING: Connection timed out while downloading.
+WARNING: Attempting to resume incomplete download (3.1 MB/9.5 MB, attempt 1)
+Resuming download matplotlib-3.11.1-cp314-cp314-win_amd64.whl (3.1 MB/9.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.5/9.5 MB 2.1 MB/s  0:00:02
+Downloading plotly-6.9.0-py3-none-any.whl (9.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 1.8 MB/s  0:00:05
+Downloading scikit_learn-1.9.0-cp314-cp314-win_amd64.whl (8.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 620.2 kB/s  0:00:12
+Using cached psycopg2_binary-2.9.12-cp314-cp314-win_amd64.whl (2.8 MB)
+Downloading faker-40.36.0-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 6.0 MB/s  0:00:00
+Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)
+Downloading contourpy-1.3.3-cp314-cp314-win_amd64.whl (232 kB)
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.63.0-cp314-cp314-win_amd64.whl (2.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 877.8 kB/s  0:00:04
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading joblib-1.5.3-py3-none-any.whl (309 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading kiwisolver-1.5.0-cp314-cp314-win_amd64.whl (75 kB)
+Using cached markupsafe-3.0.3-cp314-cp314-win_amd64.whl (15 kB)
+Using cached narwhals-2.24.0-py3-none-any.whl (461 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Using cached rpds_py-2026.6.3-cp314-cp314-win_amd64.whl (220 kB)
+Downloading scipy-1.18.0-cp314-cp314-win_amd64.whl (37.3 MB)
+   ━━━━━━━━━╸━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.9/37.3 MB 8.9 kB/s eta 0:52:56
+WARNING: Connection timed out while downloading.
+WARNING: Attempting to resume incomplete download (8.9 MB/37.3 MB, attempt 1)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Attempting to resume incomplete download (8.9 MB/37.3 MB, attempt 2)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Attempting to resume incomplete download (8.9 MB/37.3 MB, attempt 3)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Attempting to resume incomplete download (8.9 MB/37.3 MB, attempt 4)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Attempting to resume incomplete download (8.9 MB/37.3 MB, attempt 5)
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='files.pythonhosted.org', port=443): Failed to resolve 'files.pythonhosted.org' ([Errno 11001] getaddrinfo failed)")': /packages/93/3e/902d836831474b0ab5a37d16404f7bc5fafd9efba632890e271ba952635f/scipy-1.18.0-cp314-cp314-win_amd64.whl
+ERROR: Could not install packages due to an OSError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\fahhh\\AppData\\Local\\Temp\\pip-unpack-wi4ck6cp\\scipy-1.18.0-cp314-cp314-win_amd64.whl'
+Check the permissions.
+
+(.venv) PS C:\Users\fahhh\Desktop\vscode\E_commerceInventory&PerformanceAnalyticsSystem> 

@@ -1,0 +1,525 @@
+# **Big Data**
+
+## **Focus areas, in order of priority**
+
+1. How one record travels through the pipeline: Kafka for ingestion, HDFS for storage, PySpark for processing, Trino for querying. You must be able to narrate this journey and name the role of each component.
+
+2. PySpark DataFrame operations: reading CSV, filtering, deriving columns, grouping with aggregations, ordering, and writing partitioned Parquet. Also the distinction between transformations and actions.
+
+3. Kafka’s core model: topics, partitions, keys, offsets, consumer groups, and the ordering guarantee. Plus the kafka-python producer and consumer code.
+
+4. HDFS architecture: NameNode versus DataNode responsibilities, blocks, replication, and how the system survives a DataNode failure.
+
+5. What Trino is and how it differs from storage systems, message brokers and schedulers.
+
+## **The pipeline as a whole**
+
+Modern data platforms separate four concerns that older systems bundled together: moving data, storing it, transforming it, and querying it. In the stack this course teaches, each concern has its own tool.
+
+|   |
+| - |
+
+Stage
+
+|   |
+| - |
+
+Tool
+
+|   |
+| - |
+
+Role
+
+|   |
+| - |
+
+What it is not
+
+|   |
+| - |
+
+Ingestion and streaming
+
+|   |
+| - |
+
+Apache Kafka
+
+|   |
+| - |
+
+Durable, ordered, replayable event log that decouples producers from consumers
+
+|   |
+| - |
+
+Not a database, not a long term analytical store
+
+|   |
+| - |
+
+Storage
+
+|   |
+| - |
+
+HDFS
+
+|   |
+| - |
+
+Distributed, replicated file system for very large files on commodity hardware
+
+|   |
+| - |
+
+Not a query engine
+
+|   |
+| - |
+
+Processing
+
+|   |
+| - |
+
+Apache Spark (PySpark)
+
+|   |
+| - |
+
+Distributed computation: cleaning, joining, aggregating, writing curated tables
+
+|   |
+| - |
+
+Not a storage layer
+
+|   |
+| - |
+
+Interactive query
+
+|   |
+| - |
+
+Trino
+
+|   |
+| - |
+
+Distributed SQL engine that queries data where it already lives
+
+|   |
+| - |
+
+Not a storage system, not a broker, not a scheduler
+
+A banking transaction illustrates the flow. The core banking application, acting as a Kafka producer, publishes the transaction as an event to a topic, keyed by account or customer so that all events for that customer stay in order within one partition. A consumer (for example a Kafka Connect HDFS sink or a Spark Structured Streaming job) reads the topic and lands the events as files in HDFS, where each file is split into blocks and replicated across DataNodes. A scheduled PySpark job reads the raw files, filters and validates them, joins reference data, aggregates, and writes a curated table in Parquet format back to HDFS. Finally, an analyst’s dashboard issues SQL to Trino, which reads the curated Parquet files in place, without copying them into a separate warehouse, and returns the result.
+
+Keep this narrative in your head; the explanation question in this course is essentially a request to write it down with the correct technical detail.
+
+## **HDFS**
+
+### **Design assumptions**
+
+HDFS (Hadoop Distributed File System) was built for a specific workload: very large files, written once and read many times, stored on clusters of ordinary machines where hardware failure is expected rather than exceptional. Those assumptions explain every design decision below.
+
+### **Architecture**
+
+An HDFS cluster has one active **NameNode** and many **DataNodes**.
+
+The NameNode is the master. It stores the file system metadata: the directory tree, the file names and permissions, the list of blocks that make up every file, and the map of which DataNodes currently hold each block. This metadata is kept in memory for speed and persisted to disk as an fsimage snapshot plus an edit log of changes. The NameNode does not store file contents and does not sit in the data path; when a client reads a file, the NameNode tells it which DataNodes to contact and the client then reads the blocks directly from those DataNodes.
+
+The DataNodes are the workers. They store the actual blocks on local disks, serve read and write requests from clients, send a heartbeat to the NameNode every few seconds, and periodically send a block report listing every block they hold.
+
+A **Secondary NameNode** exists in classic deployments, and its name misleads almost everyone. It is not a backup and cannot take over. It periodically merges the edit log into the fsimage so that the NameNode’s restart time stays manageable. High availability, when required, is provided by a **Standby NameNode** kept in sync through shared JournalNodes, with automatic failover managed by ZooKeeper.
+
+### **Blocks and replication**
+
+Files are split into fixed size blocks, 128 MB by default. A 1 GB file becomes eight blocks. Each block is stored on several DataNodes; the default **replication factor** is three, so that 1 GB file occupies 3 GB of raw disk across the cluster. Replica placement is rack aware: with three replicas, one goes on the writer’s rack and two on a second rack, which protects against the loss of an entire rack while keeping write traffic between racks low.
+
+### **Surviving a DataNode failure**
+
+When a DataNode stops sending heartbeats for roughly ten minutes, the NameNode marks it dead. Every block that lived on that node now has fewer replicas than the target. Because the NameNode knows exactly which blocks were on the dead node, it instructs the surviving DataNodes that hold the other copies to replicate those blocks to healthy nodes until each block is back at its replication factor. Clients that were reading from the dead node simply fail over to another replica. No data is lost, and no human intervention is required. This is the complete answer to “why can HDFS survive the sudden loss of a DataNode”: each block exists on multiple DataNodes (three by default), and the NameNode re replicates under replicated blocks automatically.
+
+### **Useful commands**
+
+hdfs dfs -ls /data/raw                       *# list a directory*
+hdfs dfs -mkdir -p /data/curated             *# create directories*
+hdfs dfs -put transactions.csv /data/raw/    *# upload from local disk*
+hdfs dfs -cat /data/raw/transactions.csv **|** **head**
+hdfs dfs -du -h /data                        *# space used*
+hdfs fsck /data/raw -files -blocks -locations   *# blocks and their DataNodes*
+hdfs dfsadmin -report                           *# live and dead DataNodes*
+
+Running hdfs fsck on a file and reading the output is the quickest way to make the block and replica concepts concrete. Each block line shows its replication factor and the DataNode addresses that hold it.
+
+## **Apache Kafka**
+
+### **Core concepts**
+
+Kafka is a distributed, append only, replicated log. Its vocabulary:
+
+• A **broker** is one Kafka server; a cluster has several.
+
+• A **topic** is a named stream of records, such as transactions.
+
+• A topic is divided into **partitions**. Each partition is an ordered, immutable sequence of records stored on disk. Partitions are the unit of parallelism: a topic with twelve partitions can be written and read by up to twelve workers in parallel.
+
+• Each record in a partition has an **offset**, a sequential integer that identifies its position. Offsets are per partition; offset 57 in partition 0 and offset 57 in partition 3 are unrelated records.
+
+• A **producer** writes records to a topic. A record has an optional **key** and a value. When a key is present, the producer hashes it and uses the result modulo the partition count to select the partition, so all records with the same key land in the same partition. Without a key, records are spread across partitions round robin (or in batches).
+
+• A **consumer** reads records. Consumers belong to a **consumer group**. Within a group, each partition is assigned to exactly one consumer, so the group as a whole reads every partition once, in parallel. Two different groups each receive every record independently. If a group has more consumers than the topic has partitions, the extra consumers sit idle.
+
+• Each partition is **replicated** across brokers. One replica is the leader and handles reads and writes; the others follow. The set of replicas that are fully caught up is the in sync replica set (ISR).
+
+• Records are kept according to a **retention** policy (for example seven days) regardless of whether they have been consumed, which is what allows consumers to replay history.
+
+### **The ordering guarantee**
+
+Kafka guarantees ordering **only within a single partition**. Records written to the same partition are read in the order they were written. Across partitions there is no ordering guarantee at all. This is why the key matters: keying by customer\_id guarantees that every event for one customer is processed in order, because they all share a partition, while different customers can be processed in parallel on different partitions. An examination answer that claims ordering “across the whole topic” is wrong.
+
+### **Offsets and commits**
+
+A consumer group records its progress by committing offsets to Kafka. If enable\_auto\_commit is true (the default), the client commits periodically in the background, which is convenient but means a crash can lose messages that were fetched and committed but not yet processed. Disabling auto commit and calling commit() manually after each message is processed gives **at least once** delivery: a message might be processed twice after a crash, but it is never silently lost. Processing that tolerates duplicates (an idempotent write keyed on txn\_id, for instance) turns at least once into effectively exactly once.
+
+auto\_offset\_reset decides where a consumer starts when the group has no committed offset yet: earliest reads from the beginning of the partition, latest reads only new records.
+
+### **Producer acknowledgements**
+
+acks=0 means the producer does not wait for confirmation; acks=1 waits for the partition leader; acks=all waits until every in sync replica has the record. Financial systems use acks=all for durability.
+
+### **What Kafka is for**
+
+Kafka decouples systems. The core banking application does not need to know who consumes its events or whether they are online; it writes once to Kafka, and any number of consumers (fraud detection, HDFS landing, real time dashboards, audit) read at their own pace. The log is durable, so a consumer that is down for an hour catches up when it returns. This decoupling, with durability and replay, is the reason Kafka sits at the front of the pipeline.
+
+## **Apache Spark and PySpark**
+
+### **Architecture**
+
+A Spark application has a **driver** process, which runs your script, builds the execution plan and coordinates work, and a set of **executors** on worker nodes, which run tasks and hold data in memory. A cluster manager (YARN, Kubernetes, or Spark’s standalone manager) allocates the executors. Spark can read from HDFS, object storage, Kafka, JDBC databases and local files.
+
+### **DataFrames and lazy evaluation**
+
+The DataFrame API is the one you will use. A DataFrame is a distributed table with a schema. Operations on it fall into two classes, and the distinction is examined directly.
+
+**Transformations** describe a new DataFrame in terms of an existing one. They are **lazy**: nothing executes when you call them. Spark records them in a logical plan. Examples: select, filter (and its alias where), withColumn, withColumnRenamed, drop, distinct, groupBy followed by agg, join, orderBy and sort, union, limit, repartition, cache.
+
+**Actions** force execution. They return a value to the driver or write data out, and only at that moment does Spark optimise the accumulated plan and run it on the executors. Examples: count, show, collect, take, first, head, foreach, reduce, and every write or save call.
+
+|   |
+| - |
+
+Call
+
+|   |
+| - |
+
+Type
+
+|   |
+| - |
+
+Reason
+
+|   |
+| - |
+
+df.filter(col("amount") > 1000)
+
+|   |
+| - |
+
+Transformation
+
+|   |
+| - |
+
+Returns a new DataFrame, runs nothing
+
+|   |
+| - |
+
+df.select("customer\_id")
+
+|   |
+| - |
+
+Transformation
+
+|   |
+| - |
+
+Same
+
+|   |
+| - |
+
+df.groupBy("customer\_id").agg(...)
+
+|   |
+| - |
+
+Transformation
+
+|   |
+| - |
+
+Describes an aggregation, still lazy
+
+|   |
+| - |
+
+df.orderBy(col("total").desc())
+
+|   |
+| - |
+
+Transformation
+
+|   |
+| - |
+
+Describes a sort
+
+|   |
+| - |
+
+df.count()
+
+|   |
+| - |
+
+Action
+
+|   |
+| - |
+
+Returns a number to the driver; triggers the job
+
+|   |
+| - |
+
+df.show(20)
+
+|   |
+| - |
+
+Action
+
+|   |
+| - |
+
+Prints rows; triggers the job
+
+|   |
+| - |
+
+df.write.parquet(path)
+
+|   |
+| - |
+
+Action
+
+|   |
+| - |
+
+Materialises the result on disk
+
+Laziness lets Spark’s optimiser (Catalyst) rearrange and combine operations before anything runs: it can push a filter down to the file reader so that fewer rows are ever loaded, or drop columns that no later step uses. It also means a mistake in a transformation only surfaces when the first action runs, which surprises beginners.
+
+Transformations are also classified as narrow (each output partition depends on one input partition: filter, select, withColumn) or wide (data must be redistributed across the cluster: groupBy, join, orderBy, repartition). Wide transformations cause a **shuffle**, which is the expensive network operation that dominates the runtime of most jobs.
+
+### **Reading and writing**
+
+df **=** spark.read.csv(path, header**=**True, inferSchema**=**True)  *# schema guessed from data*
+df **=** spark.read.parquet(path)                  *# schema stored in the file*
+df.write.mode("overwrite").partitionBy("txn\_date").parquet(path)
+
+inferSchema=True makes Spark scan the file to guess column types; without it every column is a string and amount > 1000 would compare text. In production you would pass an explicit schema instead, which is faster and safer.
+
+**Parquet** is a columnar, compressed file format with an embedded schema. Analytical queries usually touch a few columns out of many, and a columnar layout reads only those columns, which is why curated tables are written as Parquet rather than CSV.
+
+Write modes: overwrite replaces existing output, append adds to it, ignore skips the write if output exists, and error (the default) fails if output exists. partitionBy("txn\_date") writes one subdirectory per date (txn\_date=2026-08-20/...), so that a later query restricted to one date reads only that directory.
+
+### **Functions you should know**
+
+From pyspark.sql.functions: col, lit, to\_date, to\_timestamp, year, month, sum, count, avg, min, max, countDistinct, when, round. Import sum and max under aliases (sum as \_sum) or call them as F.sum after import pyspark.sql.functions as F, because otherwise they shadow Python’s built in functions.
+
+to\_date(col("ts")) converts a timestamp or a timestamp string to a date, discarding the time of day. If the string uses an unusual format, pass it explicitly: to\_date(col("ts"), "dd/MM/yyyy HH\:mm\:ss").
+
+## **Trino**
+
+Trino (formerly PrestoSQL) is a distributed SQL query engine. It does not store data. A **coordinator** parses and plans each query and a set of **workers** execute it in parallel, streaming intermediate results through memory rather than writing them to disk between stages, which is what makes it fast enough for interactive use.
+
+Trino connects to data sources through **connectors**, each exposed as a catalog: the Hive connector reads Parquet and ORC files in HDFS or object storage using the Hive metastore for table definitions; there are connectors for Kafka, PostgreSQL, MySQL, Cassandra, Iceberg, Delta Lake and many more. Because several catalogs can appear in one query, Trino performs **federated queries**: a single SQL statement can join curated transactions in HDFS with a customer table in PostgreSQL without copying either.
+
+**SELECT** c.region,
+       **SUM**(t.total\_amount) **AS** amount
+**FROM** hive.curated.daily\_totals **AS** t
+**JOIN** postgresql.crm.customers **AS** c
+  **ON** t.customer\_id **=** c.customer\_id
+**WHERE** t.txn\_date **=** DATE '2026-08-20'
+**GROUP** **BY** c.region
+**ORDER** **BY** amount **DESC**;
+
+Distinguish Trino from its neighbours: HDFS and object storage hold data (Trino reads them); Kafka moves events between systems (Trino can query a topic but is not a broker); Airflow and Oozie schedule workflows (Trino runs queries on demand); Hive on MapReduce or Tez is a batch SQL system (Trino is interactive); Spark is a general processing engine that also has SQL (Trino is SQL only and optimised for low latency analytics).
+
+## **Practical 4: a PySpark aggregation job**
+
+The task: read hdfs\:///data/raw/transactions.csv (columns txn\_id, customer\_id, amount, currency, ts, status) with header and inferred schema; keep rows where status is SUCCESS and amount exceeds 1000; derive txn\_date from ts; group by customer\_id and txn\_date computing total\_amount and txn\_count; order by total\_amount descending and show the top twenty; write to hdfs\:///data/curated/daily\_totals as Parquet partitioned by txn\_date, overwriting.
+
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, to\_date, sum as \_sum, count
+
+*# 1. Session with the required application name*
+spark **=** SparkSession.builder.appName("TxnAggregation").getOrCreate()
+
+*# 2. Read the CSV; header row recognised, column types inferred*
+df **=** spark.read.csv(
+    "hdfs\:///data/raw/transactions.csv",
+    header**=**True,
+    inferSchema**=**True,
+)
+
+*# 3. Keep successful, high value transactions (both conditions, combined with &)*
+filtered **=** df.filter((col("status") **==** "SUCCESS") **&** (col("amount") **>** 1000))
+
+*# 4. Derive the calendar date from the timestamp string*
+with\_date **=** filtered.withColumn("txn\_date", to\_date(col("ts")))
+
+*# 5. Aggregate per customer per day*
+agg **=** (
+    with\_date.groupBy("customer\_id", "txn\_date")
+    .agg(
+        \_sum("amount").alias("total\_amount"),
+        count("txn\_id").alias("txn\_count"),
+    )
+    .orderBy(col("total\_amount").desc())
+)
+
+*# 6. First action: display the top twenty rows*
+agg.show(20)
+
+*# 7. Second action: persist as Parquet, one directory per txn\_date*
+agg.write.mode("overwrite").partitionBy("txn\_date").parquet(
+    "hdfs\:///data/curated/daily\_totals"
+)
+
+spark.stop()
+
+Details the marker looks for: the app name spelled exactly; header=True and inferSchema=True; both filter conditions wrapped in their own parentheses and joined with & (Python’s and does not work on columns and raises an error); to\_date applied to ts; both aggregations with the exact aliases; .desc() on the order; show(20); and mode("overwrite") with partitionBy("txn\_date") on a Parquet write.
+
+Steps 2 to 5 are all transformations; nothing is read from HDFS until show(20) runs. The write at step 7 triggers the plan a second time; in a real job you would call agg.cache() before the first action to avoid recomputing.
+
+The same job expressed through Spark SQL on a temporary view is an equally valid answer:
+
+df.createOrReplaceTempView("txns")
+
+agg **=** spark.sql("""
+    SELECT customer\_id,
+           to\_date(ts)     AS txn\_date,
+           SUM(amount)     AS total\_amount,
+           COUNT(txn\_id)   AS txn\_count
+    FROM txns
+    WHERE status = 'SUCCESS' AND amount > 1000
+    GROUP BY customer\_id, to\_date(ts)
+    ORDER BY total\_amount DESC
+""")
+
+The job is submitted to a cluster with spark-submit --master yarn txn\_aggregation.py. During revision you can run it locally against a small CSV with spark-submit --master local[\*] and a file:/// path in place of hdfs\:///.
+
+## **Practical 5: Kafka producer and consumer with kafka-python**
+
+The task has two parts. A producer connects to localhost:9092, publishes three transaction events as JSON to the topic transactions, using customer\_id as the key so that all events for one customer land in the same partition, and flushes before closing. A consumer joins the group fraud-checker, reads the topic from the earliest offset with auto commit disabled, deserialises each JSON message, prints partition, offset, key and amount, and commits manually after each message.
+
+### **Producer**
+
+import json
+from kafka import KafkaProducer
+
+producer **=** KafkaProducer(
+    bootstrap\_servers**=**"localhost:9092",
+    value\_serializer**=lambda** v: json.dumps(v).encode("utf-8"),  *# dict -> bytes*
+    key\_serializer**=lambda** k: k.encode("utf-8"),                  *# str -> bytes*
+)
+
+events **=** [
+    {"txn\_id": "T1", "customer\_id": "C100", "amount": 4500.0},
+    {"txn\_id": "T2", "customer\_id": "C101", "amount": 120.5},
+    {"txn\_id": "T3", "customer\_id": "C100", "amount": 9900.0},
+]
+
+**for** event **in** events:
+    *# Same key -> same partition, so C100's two events stay in order*
+    producer.send("transactions", key**=**event["customer\_id"], value**=**event)
+
+producer.flush()    *# block until every buffered record has been acknowledged*
+producer.close()
+
+Kafka transports bytes, not Python objects. The value serialiser turns each dictionary into a JSON string and then into UTF-8 bytes; the key serialiser turns the string key into bytes. If you pass a string key without a key serialiser, kafka-python raises an assertion error, and the marking scheme deducts a mark for exactly that omission. flush() matters because send() is asynchronous: it places the record in a buffer and returns immediately. Without flush() (or a blocking .get() on each future), the program can exit before anything reaches the broker.
+
+### **Consumer**
+
+import json
+from kafka import KafkaConsumer
+
+consumer **=** KafkaConsumer(
+    "transactions",
+    bootstrap\_servers**=**"localhost:9092",
+    group\_id**=**"fraud-checker",
+    auto\_offset\_reset**=**"earliest",     *# begin at offset 0 if nothing is committed*
+    enable\_auto\_commit**=**False,         *# we will commit ourselves, after processing*
+    value\_deserializer**=lambda** m: json.loads(m.decode("utf-8")),
+    key\_deserializer**=lambda** k: k.decode("utf-8") **if** k **else** None,
+)
+
+**for** message **in** consumer:              *# blocks, yielding records as they arrive*
+    event **=** message.value
+    print(
+        f"partition=**{**message**.**partition**}** offset=**{**message**.**offset**}** "
+        f"key=**{**message**.**key**}** amount=**{**event['amount']**}**"
+    )
+    consumer.commit()                 *# mark as processed; at least once delivery*
+
+Each message carries topic, partition, offset, key, value and timestamp. Because auto commit is off, a crash between the print and the commit() causes the record to be delivered again on restart, which is the at least once guarantee. With the default auto commit, the same crash could lose the record.
+
+To test both programs during revision, start a single broker locally (the Kafka quick start or a Docker image), create the topic with three partitions, run the consumer in one terminal and the producer in another. You will see that T1 and T3 share a partition while T2 may land on another.
+
+## **Model answer outline: tracing a transaction to a dashboard**
+
+**1. Kafka.** The core banking application is a producer; it publishes the transaction as an event to a topic, keyed by account so that the account’s events stay ordered in one partition. Kafka stores the event durably in its log and decouples the bank’s systems from every downstream consumer.
+
+**2. HDFS.** A consumer (Kafka Connect sink or a streaming job) writes the events to files in HDFS. Each file is split into 128 MB blocks spread across DataNodes; the NameNode keeps the metadata. This is the durable landing zone for batch analytics.
+
+**3. PySpark.** A Spark job reads the raw files from HDFS, filters and validates the records, joins reference data, aggregates (for example daily totals per customer), and writes a curated table back to HDFS in Parquet.
+
+**4. Trino.** The dashboard sends SQL to Trino, which queries the curated Parquet data in place, federating with other sources if needed, and returns results interactively without a separate warehouse load.
+
+Fault tolerance: each HDFS block is replicated on multiple DataNodes (three by default); if one node dies, the remaining replicas serve the data and the NameNode instructs surviving nodes to re replicate back to the target factor. Leaving this out caps the question’s marks, so write it every time.
+
+## **Self-check questions**
+
+1. A topic has six partitions and the consumer group has eight consumers. How many consumers receive data?
+
+2. Why does keying Kafka records by customer\_id matter for a fraud rule such as “three withdrawals within five minutes”?
+
+3. Classify each as transformation or action: withColumn, collect, join, take(5), write.parquet, distinct.
+
+4. What does the NameNode store, and what does it not store?
+
+5. A 640 MB file is written to HDFS with default settings. How many blocks, and how many block replicas in total?
+
+6. What is the difference between auto\_offset\_reset="earliest" and auto\_offset\_reset="latest"?
+
+7. Why is df.filter(col("status") == "SUCCESS" and col("amount") > 1000) wrong?
+
+8. Give two reasons a curated table is stored as Parquet rather than CSV.
+
+9. Which component in the pipeline would you call a query engine, and which would you call a storage system?
+
+10. Explain why a consumer with enable\_auto\_commit=False that never calls commit() will reprocess every message each time it restarts.

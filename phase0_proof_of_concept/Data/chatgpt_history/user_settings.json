@@ -1,0 +1,38 @@
+[
+  {
+    "announcements": {
+      "oai/apps/hasDismissedCanvasContextualOnboarding": "2025-05-22T14:59:15.525138+00:00",
+      "oai/apps/hasSeenAdvancedVoice/2024-09-24": "2025-12-10T08:05:02.151323+00:00",
+      "oai/apps/hasSeenAdvancedVoiceWebNuxTooltip": "2025-05-23T22:39:01.673313+00:00",
+      "oai/apps/hasSeenArtifactsLearnMoreModal": "2026-08-31T18:41:37.285040+00:00",
+      "oai/apps/hasSeenAutoSwitchNux": "2025-12-12T18:39:25.612964+00:00",
+      "oai/apps/hasSeenBigPasteCoachmark": "2026-06-11T18:08:27.422911+00:00",
+      "oai/apps/hasSeenBurritoNux": "2025-08-13T16:04:48.536168+00:00",
+      "oai/apps/hasSeenDesktopBrowserExtensionAnnouncement": "2025-06-07T05:46:26.682993+00:00",
+      "oai/apps/hasSeenImage2026RevampNux": "2026-04-22T08:59:11.489700+00:00",
+      "oai/apps/hasSeenMemoryUpdatedTooltip": "2025-06-12T23:30:14.083406+00:00",
+      "oai/apps/hasSeenMoonshineNuxV2": "2025-06-12T22:02:10.777512+00:00",
+      "oai/apps/hasSeenOnboarding": "2025-05-22T14:37:49.420492+00:00",
+      "oai/apps/hasSeenTatertotNux": "2025-09-21T10:39:16.743106+00:00",
+      "oai/apps/hasSeenTemporaryChatOnboarding": "2026-08-19T20:27:02.579385+00:00",
+      "oai/apps/hasSeenWindowsAppOnboarding": "2025-05-22T14:38:00.795853+00:00",
+      "oai/apps/hasSeenWritingInlineEditCaretNux": "2026-04-27T16:33:12.596237+00:00",
+      "oai/apps/hasSeenWritingInlineEditNux": "2026-04-27T16:33:08.485048+00:00"
+    },
+    "beta_settings": {},
+    "habitat_object_version": 44321428,
+    "settings": {
+      "codex_training_allowed": true,
+      "first_party_project_pins_unmigrated": true,
+      "moonshine": true,
+      "potion_enabled": true,
+      "project_pins_backfilled": true,
+      "show_expanded_code_view": false,
+      "study_mode_project_pins_unmigrated": true,
+      "sunshine": true,
+      "training_allowed": true,
+      "voice_name": "ember"
+    },
+    "user_id": "user-xEhPFRo3iUrseo6YrTN42uEK"
+  }
+]

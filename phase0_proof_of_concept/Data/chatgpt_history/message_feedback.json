@@ -1,0 +1,22 @@
+[
+  {
+    "content": "{}",
+    "conversation_id": "69708fae-379c-8325-9309-41110ccc25f4",
+    "create_time": "2026-01-21T09:26:15.235722Z",
+    "id": "28f53b3b-974e-4109-98b3-ec580feea1b3",
+    "rating": "thumbs_up",
+    "update_time": "2026-01-21T09:26:15.385859Z",
+    "user_id": "user-xEhPFRo3iUrseo6YrTN42uEK",
+    "workspace_id": null
+  },
+  {
+    "content": "{\"tags\": [\"incorrect-or-incomplete\"], \"tag_choices\": [\"incorrect-or-incomplete\", \"not-what-i-asked-for\", \"slow-or-buggy\", \"style-or-tone\", \"safety-or-legal-concern\", \"other\"]}",
+    "conversation_id": "69ba36fa-03a8-8328-a83b-fecee0eddbb4",
+    "create_time": "2026-03-18T06:28:47.380291Z",
+    "id": "2fa0e61e-6502-48c2-8236-504722027f97",
+    "rating": "thumbs_down",
+    "update_time": "2026-03-18T06:38:44.375233Z",
+    "user_id": "user-xEhPFRo3iUrseo6YrTN42uEK",
+    "workspace_id": null
+  }
+]

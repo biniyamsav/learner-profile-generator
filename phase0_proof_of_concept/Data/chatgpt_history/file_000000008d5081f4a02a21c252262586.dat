@@ -1,0 +1,858 @@
+
+from connection import get_connection
+
+def top_10_products_by_revenue():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            p.name,
+            SUM(oi.quantity * oi.price_at_sale) AS total_revenue
+        FROM order_items oi
+        INNER JOIN products p ON oi.product_id = p.id
+        GROUP BY oi.product_id, p.name
+        ORDER BY total_revenue DESC
+        LIMIT 10;
+    """)
+    data = curr.fetchall()
+    curr.close()
+   
+    return data
+
+
+def revenue_per_month_last_12_months():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            DATE_TRUNC('month', o.order_date) AS month,
+            SUM(oi.quantity * oi.price_at_sale) AS total_revenue
+        FROM orders o
+        INNER JOIN order_items oi ON o.id = oi.order_id
+        WHERE order_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY DATE_TRUNC('month', o.order_date)
+        ORDER BY month ASC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+  
+    return data
+
+
+def top_revenue_category():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.category, SUM(oi.price_at_sale) AS total_per_catg
+        FROM products p
+        INNER JOIN order_items oi ON oi.product_id = p.id
+        GROUP BY p.category
+        ORDER BY SUM(oi.price_at_sale) DESC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+   
+    return data
+
+
+def average_order_value():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT AVG(order_total) AS average_order_value
+        FROM (
+            SELECT
+                oi.order_id,
+                SUM(oi.quantity * oi.price_at_sale) AS order_total
+            FROM order_items oi
+            GROUP BY oi.order_id
+        ) AS order_totals;
+    """)
+    data = curr.fetchall()
+    curr.close()
+  
+    return data
+
+
+def top_revenue_region():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT
+            c.region,
+            SUM(oi.quantity * oi.price_at_sale) AS total_revenue
+        FROM customers c
+        JOIN orders o ON c.id = o.customer_id
+        JOIN order_items oi ON o.id = oi.order_id
+        GROUP BY c.region
+        ORDER BY total_revenue DESC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+
+    return data
+
+
+def pct_cancelled_vs_delivered():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT
+            status,
+            COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
+        FROM orders
+        WHERE status IN ('cancelled', 'delivered')
+        GROUP BY status;
+    """)
+    data = curr.fetchall()
+    curr.close()
+  
+    return data
+
+
+def rolling_7_30_day_sales_per_product():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT name,
+               order_date, (p.unit_price * oi.quantity) AS daily_sales,
+               SUM(p.unit_price * oi.quantity) OVER (
+                   PARTITION BY product_id
+                   ORDER BY order_date
+                   ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+               ) AS rolling_7_day,
+               SUM(p.unit_price * oi.quantity) OVER (
+                   PARTITION BY product_id
+                   ORDER BY order_date
+                   ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+               ) AS rolling_30_day
+        FROM products p
+        INNER JOIN order_items oi ON oi.product_id = p.id
+        INNER JOIN orders o ON o.id = oi.order_id
+        ORDER BY name, order_date;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def top_selling_product_per_month_last_12_months():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT name, month, total_quantity_sold
+        FROM (
+            SELECT 
+                p.name,
+                DATE_TRUNC('month', o.order_date) AS month,
+                SUM(oi.quantity) AS total_quantity_sold,
+                RANK() OVER (
+                    PARTITION BY DATE_TRUNC('month', o.order_date)
+                    ORDER BY SUM(oi.quantity) DESC
+                ) AS rank
+            FROM orders o
+            INNER JOIN order_items oi ON o.id = oi.order_id
+            INNER JOIN products p ON p.id = oi.product_id
+            WHERE o.status = 'delivered'
+            AND o.order_date >= CURRENT_DATE - INTERVAL '12 months'
+            GROUP BY p.name, DATE_TRUNC('month', o.order_date)
+        ) AS subquery
+        WHERE rank = 1
+        ORDER BY month;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def highest_order_volume_day_of_week():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            TO_CHAR(o.order_date, 'Day') AS day_of_week,
+            COUNT(o.id) AS order_volume
+        FROM orders o
+        WHERE o.status = 'delivered'
+        AND o.order_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY TO_CHAR(o.order_date, 'Day'), EXTRACT(DOW FROM o.order_date)
+        ORDER BY EXTRACT(DOW FROM o.order_date);
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def highest_revenue_quarter():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            EXTRACT(YEAR FROM o.order_date) AS year,
+            EXTRACT(QUARTER FROM o.order_date) AS quarter,
+            SUM(oi.quantity * oi.price_at_sale) AS total_revenue
+        FROM orders o
+        INNER JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.status = 'delivered'
+        GROUP BY EXTRACT(YEAR FROM o.order_date), EXTRACT(QUARTER FROM o.order_date)
+        ORDER BY total_revenue DESC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+    return data
+
+def stock_level_per_product_per_warehouse():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name, w.name, i.stock_level
+        FROM products p
+        INNER JOIN inventory i ON p.id = i.product_id
+        INNER JOIN warehouses w ON i.warehouse_id = w.id
+        GROUP BY p.id, p.name, w.id, w.name
+        ORDER BY p.name, w.name;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def out_of_stock_products():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name, w.name AS warehouse, i.stock_level
+        FROM products p
+        INNER JOIN inventory i ON p.id = i.product_id
+        INNER JOIN warehouses w ON i.warehouse_id = w.id
+        WHERE i.stock_level = 0
+        ORDER BY p.name;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def low_stock_products(threshold=50):
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name, w.name AS warehouse, i.stock_level
+        FROM products p
+        INNER JOIN inventory i ON p.id = i.product_id
+        INNER JOIN warehouses w ON i.warehouse_id = w.id
+        WHERE i.stock_level < %s
+        ORDER BY i.stock_level ASC;
+    """, (threshold,))
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def count_low_stock_products(threshold=50):
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT COUNT(*)
+        FROM inventory
+        WHERE stock_level < %s;
+    """, (threshold,))
+    data = curr.fetchone()
+    curr.close()
+
+    return data[0] if data else 0
+
+
+def count_out_of_stock_products():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT COUNT(*)
+        FROM inventory
+        WHERE stock_level = 0;
+    """)
+    data = curr.fetchone()
+    curr.close()
+
+    return data[0] if data else 0
+
+
+def worst_on_time_delivery_rate_per_supplier():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT s.name,
+               ROUND(COUNT(CASE WHEN actual_date <= expected_date THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 2) AS on_time_rate
+        FROM suppliers s
+        INNER JOIN restock_events re ON s.id = re.supplier_id
+        WHERE re.actual_date IS NOT NULL
+        GROUP BY s.id, s.name
+        ORDER BY on_time_rate ASC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def not_restocked_in_last_30_days():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name
+        FROM products p
+        WHERE p.id NOT IN (
+            SELECT p2.id
+            FROM products p2
+            INNER JOIN inventory i ON p2.id = i.product_id
+            WHERE i.last_restocked >= CURRENT_DATE - INTERVAL '30 days'
+        )
+        ORDER BY p.name;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def overstocked_products():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        WITH stock AS (
+            SELECT product_id, SUM(stock_level) AS total_stock
+            FROM inventory
+            GROUP BY product_id
+        ),
+        recent_sales AS (
+            SELECT oi.product_id, SUM(oi.quantity * oi.price_at_sale) AS total_sales
+            FROM order_items oi
+            INNER JOIN orders o ON o.id = oi.order_id
+            WHERE o.status = 'delivered'
+            AND o.order_date >= CURRENT_DATE - INTERVAL '30 days'
+            GROUP BY oi.product_id
+        )
+        SELECT p.name,
+               s.total_stock,
+               COALESCE(r.total_sales, 0) AS recent_sales
+        FROM products p
+        INNER JOIN stock s ON s.product_id = p.id
+        LEFT JOIN recent_sales r ON r.product_id = p.id
+        WHERE s.total_stock > 1.5 * (SELECT AVG(total_stock) FROM stock)
+        AND COALESCE(r.total_sales, 0) < 0.5 * (SELECT AVG(total_sales) FROM recent_sales)
+        ORDER BY s.total_stock DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def stock_turnover_rate_per_product():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        WITH unit_sold AS (
+            SELECT p.id, p.name, SUM(oi.quantity) AS quantity_sold
+            FROM products p
+            INNER JOIN order_items oi ON p.id = oi.product_id
+            INNER JOIN orders o ON o.id = oi.order_id
+            WHERE o.status = 'delivered'
+            GROUP BY p.id, p.name
+        ),
+        avg_stock AS (
+            SELECT p.id, p.name, AVG(i.stock_level) AS avg_stock
+            FROM products p
+            INNER JOIN inventory i ON i.product_id = p.id
+            GROUP BY p.id, p.name
+        )
+        SELECT u.name,
+               u.quantity_sold,
+               a.avg_stock,
+               ROUND(u.quantity_sold / NULLIF(a.avg_stock, 0), 2) AS turnover_rate
+        FROM unit_sold u
+        INNER JOIN avg_stock a ON a.id = u.id
+        ORDER BY turnover_rate DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def days_until_stockout():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name,
+               SUM(i.stock_level) AS current_stock,
+               ROUND(SUM(i.stock_level) / NULLIF(SUM(oi.quantity) / 30.0, 0), 0) AS days_remaining
+        FROM products p
+        INNER JOIN inventory i ON i.product_id = p.id
+        INNER JOIN order_items oi ON oi.product_id = p.id
+        INNER JOIN orders o ON o.id = oi.order_id
+        WHERE o.status = 'delivered'
+        AND o.order_date >= CURRENT_DATE - INTERVAL '30 days'
+        GROUP BY p.id, p.name
+        ORDER BY days_remaining ASC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def discontinued_with_remaining_stock():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name, SUM(i.stock_level) AS remaining_stock
+        FROM products p
+        INNER JOIN inventory i ON i.product_id = p.id
+        WHERE p.discontinued = true
+        GROUP BY p.id, p.name
+        HAVING SUM(i.stock_level) > 0
+        ORDER BY remaining_stock DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def orders_fulfilled_per_warehouse():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            w.name,
+            COUNT(DISTINCT o.id) AS number_of_orders
+        FROM warehouses w
+        LEFT JOIN order_items oi ON w.id = oi.warehouse_fulfilled_from
+        LEFT JOIN orders o ON o.id = oi.order_id
+            AND o.order_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY w.id, w.name
+        ORDER BY number_of_orders DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+  
+    return data
+
+
+def revenue_fulfilled_per_warehouse():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            w.name,
+            COALESCE(SUM(oi.quantity * oi.price_at_sale), 0) AS total_revenue
+        FROM warehouses w
+        LEFT JOIN order_items oi ON w.id = oi.warehouse_fulfilled_from
+        LEFT JOIN orders o ON o.id = oi.order_id
+            AND o.order_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY w.id, w.name
+        ORDER BY total_revenue DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+    con.close()
+    return data
+
+def warehouse_highest_stockout_frequency():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            w.name,
+            SUM(r.quantity) AS stockout_frequency
+        FROM warehouses w
+        INNER JOIN restock_events r ON w.id = r.warehouse_id
+            AND r.actual_date >= CURRENT_DATE - INTERVAL '12 months'
+        GROUP BY w.id, w.name
+        ORDER BY stockout_frequency DESC
+        LIMIT 10;
+    """)
+    data = curr.fetchall()
+    curr.close()
+   
+    return data
+
+
+def warehouse_most_dead_stock():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        WITH stock AS (
+            SELECT w.id, w.name, SUM(i.stock_level) AS stack_level
+            FROM inventory i
+            INNER JOIN warehouses w ON i.warehouse_id = w.id
+            GROUP BY w.id, w.name
+        ),
+        sales_level AS (
+            SELECT w.id, w.name, SUM(oi.quantity * oi.price_at_sale) AS sales
+            FROM warehouses w
+            INNER JOIN order_items oi ON w.id = oi.warehouse_fulfilled_from
+            INNER JOIN orders o ON o.id = oi.order_id
+                AND o.order_date >= CURRENT_DATE - INTERVAL '12 months'
+            GROUP BY w.id, w.name
+        )
+        SELECT s.name, s.stack_level, sa.sales, (s.stack_level / sa.sales) AS ratio
+        FROM stock AS s
+        INNER JOIN sales_level AS sa ON sa.id = s.id
+        ORDER BY (s.stack_level / sa.sales) DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def stock_level_comparison_across_warehouses():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT 
+            p.name,
+            w.name AS warehouse_name,
+            i.stock_level
+        FROM inventory i
+        JOIN products p ON i.product_id = p.id
+        JOIN warehouses w ON i.warehouse_id = w.id;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def warehouse_fastest_fulfillment():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT w.name,
+               AVG(re.actual_date - re.expected_date) AS avg_restock_delay
+        FROM restock_events re
+        INNER JOIN warehouses w ON w.id = re.warehouse_id
+        WHERE re.actual_date IS NOT NULL
+        GROUP BY w.id, w.name
+        ORDER BY avg_restock_delay ASC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def on_time_delivery_rate_per_supplier():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT s.name,
+               ROUND(COUNT(CASE WHEN actual_date <= expected_date THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 2) AS on_time_rate
+        FROM suppliers s
+        INNER JOIN restock_events re ON s.id = re.supplier_id
+        WHERE re.actual_date IS NOT NULL
+        GROUP BY s.id, s.name
+        ORDER BY on_time_rate DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def average_delay_days_per_supplier():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT s.name,
+               AVG(actual_date - expected_date) AS avg_delay_days
+        FROM restock_events re
+        INNER JOIN suppliers s ON s.id = re.supplier_id
+        WHERE actual_date IS NOT NULL
+        GROUP BY s.name
+        ORDER BY avg_delay_days DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def supplier_most_delayed_deliveries():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT s.name, COUNT(CASE WHEN re.status = 'delayed' THEN 1 END) AS delays
+        FROM restock_events re
+        INNER JOIN suppliers s ON re.supplier_id = s.id
+        GROUP BY s.name
+        ORDER BY delays DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def products_relying_on_least_reliable_suppliers():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.name AS product_name,
+               s.name AS supplier_name
+        FROM restock_events re
+        INNER JOIN suppliers s ON re.supplier_id = s.id
+        INNER JOIN products p ON re.product_id = p.id
+        WHERE re.supplier_id = (
+            SELECT re2.supplier_id
+            FROM restock_events re2
+            WHERE re2.status = 'delayed'
+            GROUP BY re2.supplier_id
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+        )
+        GROUP BY p.name, s.name;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def supplier_on_time_rate_trend_last_6_months():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT
+            s.name AS supplier_name,
+            DATE_TRUNC('month', re.expected_date) AS month,
+            COUNT(*) AS total_orders,
+            COUNT(CASE WHEN re.status != 'delayed' THEN 1 END) AS on_time_orders,
+            ROUND(
+                COUNT(CASE WHEN re.status != 'delayed' THEN 1 END)::numeric
+                / COUNT(*), 3
+            ) AS on_time_rate
+        FROM restock_events re
+        INNER JOIN suppliers s ON re.supplier_id = s.id
+        WHERE re.expected_date >= CURRENT_DATE - INTERVAL '6 months'
+        GROUP BY s.name, DATE_TRUNC('month', re.expected_date)
+        ORDER BY s.name, month;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def supplier_highest_total_quantity_delivered():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT s.name AS supplier_name,
+               SUM(re.quantity) AS total_quantity
+        FROM restock_events re
+        INNER JOIN suppliers s ON re.supplier_id = s.id
+        GROUP BY s.name
+        ORDER BY total_quantity DESC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+def top_20_customers_by_spend():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT c.id AS customer_id,
+               c.name AS customer_name,
+               SUM(oi.quantity * oi.price_at_sale) AS total_spend
+        FROM customers c
+        INNER JOIN orders o ON o.customer_id = c.id
+        INNER JOIN order_items oi ON oi.order_id = o.id
+        GROUP BY c.id, c.name
+        ORDER BY total_spend DESC
+        LIMIT 20;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def region_highest_avg_order_value():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT c.region,
+               AVG(order_totals.order_value) AS avg_order_value
+        FROM (
+            SELECT o.id AS order_id,
+                   o.customer_id,
+                   SUM(oi.quantity * oi.price_at_sale) AS order_value
+            FROM orders o
+            INNER JOIN order_items oi ON oi.order_id = o.id
+            GROUP BY o.id, o.customer_id
+        ) order_totals
+        INNER JOIN customers c ON c.id = order_totals.customer_id
+        GROUP BY c.region
+        ORDER BY avg_order_value DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def new_customers_last_month():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT COUNT(*) AS new_customers
+        FROM customers
+        WHERE signup_date >= CURRENT_DATE - INTERVAL '1 month';
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def one_time_customers():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT c.id AS customer_id,
+               c.name AS customer_name,
+               COUNT(o.id) AS order_count
+        FROM customers c
+        INNER JOIN orders o ON o.customer_id = c.id
+        GROUP BY c.id, c.name
+        HAVING COUNT(o.id) = 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def order_frequency_distribution():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        WITH customer_order_counts AS (
+            SELECT c.id AS customer_id,
+                   COUNT(o.id) AS order_count
+            FROM customers c
+            INNER JOIN orders o ON o.customer_id = c.id
+            GROUP BY c.id
+        )
+        SELECT
+            CASE
+                WHEN order_count = 1 THEN '1 order'
+                WHEN order_count BETWEEN 2 AND 5 THEN '2-5 orders'
+                ELSE '5+ orders'
+            END AS frequency_bucket,
+            COUNT(*) AS customer_count
+        FROM customer_order_counts
+        GROUP BY
+            CASE
+                WHEN order_count = 1 THEN '1 order'
+                WHEN order_count BETWEEN 2 AND 5 THEN '2-5 orders'
+                ELSE '5+ orders'
+            END
+        ORDER BY frequency_bucket;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def profit_margin_per_product():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.id AS product_id,
+               p.name AS product_name,
+               p.unit_price - p.unit_cost AS profit_margin
+        FROM products p
+        ORDER BY profit_margin DESC;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def category_highest_avg_profit_margin():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.category,
+               AVG(p.unit_price - p.unit_cost) AS avg_profit_margin
+        FROM products p
+        GROUP BY p.category
+        ORDER BY avg_profit_margin DESC
+        LIMIT 1;
+    """)
+    data = curr.fetchall()
+    curr.close()
+
+    return data
+
+
+def products_never_ordered():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        SELECT p.id AS product_id,
+               p.name AS product_name
+        FROM products p
+        LEFT JOIN order_items oi ON oi.product_id = p.id
+        WHERE oi.id IS NULL;
+    """)
+    data = curr.fetchall()
+    curr.close()
+    return data
+
+
+def product_rank_by_revenue_within_category():
+    con = get_connection()
+    curr = con.cursor()
+    curr.execute("""
+        WITH product_revenue AS (
+            SELECT p.id AS product_id,
+                   p.name AS product_name,
+                   p.category,
+                   SUM(oi.quantity * oi.price_at_sale) AS total_revenue
+            FROM products p
+            INNER JOIN order_items oi ON oi.product_id = p.id
+            GROUP BY p.id, p.name, p.category
+        )
+        SELECT product_id,
+               product_name,
+               category,
+               total_revenue,
+               RANK() OVER (PARTITION BY category ORDER BY total_revenue DESC) AS revenue_rank
+        FROM product_revenue
+        ORDER BY category, revenue_rank;
+    """)
+    data = curr.fetchall()
+    curr.close()
+  
+    return data
