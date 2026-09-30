@@ -40,3 +40,8 @@ phase0_proof_of_concept/**/user_settings.json
 phase0_proof_of_concept/*.json
 phase0_proof_of_concept/*.html
 phase0_proof_of_concept/*.log
+
+# Root-level private exports and generated learner profiles
+/user_messages.json
+/rich_learner_context.json
+/learner_profile.json

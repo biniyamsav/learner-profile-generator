@@ -165,3 +165,115 @@ def test_all_batches_failing_raises(tmp_path, monkeypatch):
     path = _setup(tmp_path, monkeypatch)
     with pytest.raises(profile_builder.ProfileBuilderError):
         build_profile(path, FakeLLM(fail_first_n=99))
+
+
+def test_build_profile_accepts_compact_context(tmp_path):
+    compact = {
+        "dataset_summary": {"total_messages": 10, "selected_conversations": 2},
+        "learner_profile_context": {
+            "main_domains": ["Python", "SQL"],
+            "learning_behaviors": ["debugging", "project_building"],
+            "domain_conversation_counts": {"Python": 1, "SQL": 1},
+            "conversation_summaries": [
+                {
+                    "title": "Python debugging",
+                    "domains": ["Python"],
+                    "learning_behaviors": ["debugging"],
+                    "evidence": [
+                        {
+                            "evidence_id": "E001",
+                            "text": "My Python code gives an import error. How do I fix it?",
+                            "kind": "attempting_or_debugging, asking_for_help_or_explanation",
+                            "source_note": "short_user_turn",
+                        },
+                        {
+                            "evidence_id": "E002",
+                            "text": "I tried changing the import and still get a traceback.",
+                            "kind": "attempting_or_debugging",
+                            "source_note": "short_user_turn",
+                        },
+                    ],
+                }
+            ],
+        },
+    }
+    path = tmp_path / "rich_learner_context.json"
+    path.write_text(json.dumps(compact), encoding="utf-8")
+
+    class FakeCompactLLM:
+        def generate(self, prompt):
+            return json.dumps({
+                "observed_patterns": [
+                    {
+                        "pattern": "Returns with continued debugging questions",
+                        "observation": "Two messages describe trying a fix and asking about the remaining error.",
+                        "evidence_ids": ["E001", "E002"],
+                    }
+                ],
+                "explicit_preferences": [],
+            })
+
+    profile = build_profile(path, FakeCompactLLM())
+    assert profile["topic_activity"] == [
+        {"topic": "Python", "conversation_count": 1, "evidence_ids": ["E001", "E002"]},
+        {"topic": "SQL", "conversation_count": 1, "evidence_ids": []},
+    ]
+    assert profile["observed_patterns"][0]["evidence_ids"] == ["E001", "E002"]
+    assert profile["evidence"][0]["conversation_title"] == "Python debugging"
+    assert "skill or mastery" in profile["not_inferable_from_chat_history"][0]
+
+
+def test_groq_provider_uses_configured_model_and_prompt(monkeypatch):
+    from types import SimpleNamespace
+    import openai
+
+    captured = {}
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            captured["client_kwargs"] = kwargs
+            self.chat = SimpleNamespace(
+                completions=SimpleNamespace(create=self.create)
+            )
+
+        def create(self, **kwargs):
+            captured["request"] = kwargs
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok": true}'))]
+            )
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    monkeypatch.setenv("GROQ_MODEL", "test-model")
+    monkeypatch.setattr(openai, "OpenAI", FakeClient)
+
+    provider = profile_builder.LLMProvider()
+    assert provider.generate("test prompt") == '{"ok": true}'
+    assert captured["client_kwargs"]["base_url"] == "https://api.groq.com/openai/v1"
+    assert captured["request"]["model"] == "test-model"
+    assert captured["request"]["messages"] == [
+        {"role": "user", "content": "test prompt"}
+    ]
+    assert captured["request"]["response_format"] == {"type": "json_object"}
+
+
+def test_groq_provider_discovers_active_model(monkeypatch):
+    from types import SimpleNamespace
+    import openai
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    monkeypatch.delenv("GROQ_MODEL", raising=False)
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            self.models = SimpleNamespace(
+                list=lambda: SimpleNamespace(data=[
+                    SimpleNamespace(id="whisper-large-v3", active=True),
+                    SimpleNamespace(id="llama-4-maverick-17b", active=True),
+                    SimpleNamespace(id="llama-inactive", active=False),
+                ])
+            )
+
+    monkeypatch.setattr(openai, "OpenAI", FakeClient)
+
+    provider = profile_builder.LLMProvider()
+    assert provider.model_name == "llama-4-maverick-17b"

@@ -3,8 +3,8 @@ Reads user_messages.json (output of extractor.py) and produces a structured,
 confidence-scored learner profile by batching messages through an LLM.
 
 Pipeline:
-    user_messages.json -> batch into groups -> LLM call per batch
-    -> validate/parse each batch's JSON output -> merge all batches
+    rich_learner_context.json -> one LLM call -> validate profile
+    user_messages.json -> batch -> LLM call per batch -> merge profile
     -> final learner_profile.json
 
 Design notes:
@@ -19,11 +19,12 @@ Design notes:
   reported a high number for that one batch.
 
 Usage:
-    python profile_builder.py path/to/user_messages.json
+    python profile_builder.py path/to/rich_learner_context.json [output.json]
+    python profile_builder.py path/to/user_messages.json [output.json]
 
 Requires:
-    pip install google-generativeai
-    Set the GEMINI_API_KEY environment variable before running.
+    pip install -r requirements.txt
+    Set the GROQ_API_KEY environment variable before running.
 """
 
 from __future__ import annotations
@@ -45,11 +46,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-BATCH_SIZE = 1000        # messages per LLM call. Gemini Flash supports up to a
-                         # ~1M token context window, so large batches are safe and
-                         # give the model far more context to spot real patterns
-                         # (vs. isolated snapshots from tiny batches). Lower this
-                         # only if you see truncation or context-limit errors.
+BATCH_SIZE = 1000        # messages per LLM call. Lower this if requests exceed
+                         # the selected model's context or rate limits.
 MAX_RETRIES = 5
 RETRY_BACKOFF_SECONDS = 5
 MAX_BATCH_CHARS = 400_000    # ~100k tokens. Batches are capped by size, not just message
@@ -73,65 +71,109 @@ class LLMResponseError(ProfileBuilderError):
 # ---------------------------------------------------------------------- #
 
 class LLMProvider:
-    """Thin wrapper around the Gemini REST API (no SDK dependency — avoids grpc,
-    which requires a native DLL that some locked-down Windows environments block
-    via Application Control policy)."""
+    """Groq chat-completions client using its OpenAI-compatible API."""
 
-    API_URL_TEMPLATE = (
-        "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    )
+    API_BASE_URL = "https://api.groq.com/openai/v1"
 
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-flash-latest"):
-        self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
+    def __init__(self, api_key: Optional[str] = None, model_name: Optional[str] = None):
+        self.api_key = api_key or os.environ.get("GROQ_API_KEY")
         if not self.api_key:
             raise ProfileBuilderError(
-                "No Gemini API key found. Set the GEMINI_API_KEY environment variable."
+                "No Groq API key found. Set the GROQ_API_KEY environment variable."
             )
-        self.model_name = model_name
         try:
-            import requests  # noqa: F401 — just confirming it's available
+            from openai import APIError, APIStatusError, OpenAI
         except ImportError as e:
             raise ProfileBuilderError(
-                "The 'requests' library is not installed. Run: pip install requests"
+                "The 'openai' library is not installed. Run: pip install -r requirements.txt"
             ) from e
 
+        self._api_error_type = APIError
+        self._api_status_error_type = APIStatusError
+        self.client = OpenAI(
+            api_key=self.api_key,
+            base_url=self.API_BASE_URL,
+            max_retries=0,
+        )
+        self.model_name = model_name or os.environ.get("GROQ_MODEL")
+        if not self.model_name:
+            self.model_name = self._discover_chat_model()
+
+    def _discover_chat_model(self) -> str:
+        """Choose an active text model exposed to this API key, avoiding stale hard-coded IDs."""
+        try:
+            models = self.client.models.list().data
+        except self._api_error_type as e:
+            raise ProfileBuilderError(
+                f"Could not list models available to this Groq API key: {e}. "
+                "Set GROQ_MODEL to an active model ID from your Groq console."
+            ) from e
+
+        excluded_terms = ("whisper", "audio", "speech", "tts", "guard", "embed")
+        candidates = [
+            model.id
+            for model in models
+            if getattr(model, "active", True)
+            and not any(term in model.id.lower() for term in excluded_terms)
+        ]
+        if not candidates:
+            raise ProfileBuilderError(
+                "No active text models were returned for this Groq API key. "
+                "Set GROQ_MODEL to an active chat model ID from your Groq console."
+            )
+
+        preferred_terms = (
+            "llama-4-maverick",
+            "gpt-oss-120b",
+            "llama-3.3",
+            "qwen",
+            "llama",
+            "deepseek",
+            "kimi",
+        )
+        selected = next(
+            (
+                model_id
+                for term in preferred_terms
+                for model_id in candidates
+                if term in model_id.lower()
+            ),
+            candidates[0],
+        )
+        logger.info("Using Groq model available to this key: %s", selected)
+        return selected
+
     def generate(self, prompt: str) -> str:
-        """Calls the LLM once via REST and returns the raw text response. Raises on total failure."""
-        import requests
-
-        url = self.API_URL_TEMPLATE.format(model=self.model_name)
-        # Key goes in a header, NOT the URL: requests prints the full URL in
-        # connection-error messages, which would leak the key into logs.
-        headers = {"Content-Type": "application/json", "x-goog-api-key": self.api_key}
-        payload = {"contents": [{"parts": [{"text": prompt}]}]}
-
+        """Calls Groq and returns the model's text response."""
         last_error: Optional[Exception] = None
         for attempt in range(1, MAX_RETRIES + 1):
             try:
-                response = requests.post(
-                    url, headers=headers, json=payload, timeout=300
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
+                    timeout=300,
                 )
-                if response.status_code != 200:
-                    raise LLMResponseError(
-                        f"Gemini API returned status {response.status_code}: {response.text[:500]}"
-                    )
-                data = response.json()
-                candidates = data.get("candidates", [])
-                if not candidates:
-                    raise LLMResponseError(f"No candidates in Gemini response: {data}")
-                parts = candidates[0].get("content", {}).get("parts", [])
-                text = "".join(p.get("text", "") for p in parts).strip()
+                text = response.choices[0].message.content
+                text = text.strip() if isinstance(text, str) else ""
                 if not text:
-                    raise LLMResponseError("Gemini returned an empty response.")
+                    raise LLMResponseError("Groq returned an empty response.")
                 return text
-            except (requests.RequestException, LLMResponseError) as e:
+            except (self._api_error_type, LLMResponseError, OSError) as e:
+                if isinstance(e, self._api_status_error_type):
+                    status_code = e.status_code
+                    if 400 <= status_code < 500 and status_code != 429:
+                        raise LLMResponseError(
+                            f"Groq rejected model '{self.model_name}' (HTTP {status_code}): {e}. "
+                            "Check GROQ_MODEL or choose an active model ID from your Groq console."
+                        ) from e
                 last_error = e
                 logger.warning(
                     "LLM call failed (attempt %d/%d): %s", attempt, MAX_RETRIES, e
                 )
                 if attempt < MAX_RETRIES:
                     time.sleep(RETRY_BACKOFF_SECONDS * attempt)
-        raise LLMResponseError(f"LLM call failed after {MAX_RETRIES} attempts: {last_error}")
+        raise LLMResponseError(f"Groq call failed after {MAX_RETRIES} attempts: {last_error}")
 
 
 # ---------------------------------------------------------------------- #
@@ -171,6 +213,142 @@ REQUIRED_TOP_LEVEL_KEYS = {
 }
 
 
+def is_compact_context(data: Any) -> bool:
+    """True when the payload is the compact summarization output generated by analyze_learner.py."""
+    return isinstance(data, dict) and "learner_profile_context" in data and isinstance(data["learner_profile_context"], dict)
+
+
+def load_profile_input(path: Path) -> Any:
+    """Load either raw message JSON or the compact learner context JSON."""
+    if not path.exists():
+        raise ProfileBuilderError(f"Input file not found: {path}")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ProfileBuilderError(f"'{path}' is not valid JSON: {e}") from e
+
+    if isinstance(data, list):
+        if not data:
+            raise ProfileBuilderError(f"'{path}' does not contain a non-empty list of messages.")
+        return data
+
+    if is_compact_context(data):
+        return data
+
+    raise ProfileBuilderError(
+        f"Unsupported input format in '{path}'. Expected either a raw message list or the compact learner context JSON."
+    )
+
+
+def build_compact_context_prompt(context: dict[str, Any]) -> str:
+    """Ask for cited observations only; the history cannot verify mastery."""
+    learner_context = context.get("learner_profile_context", {})
+    evidence_index = []
+    for convo in learner_context.get("conversation_summaries", []):
+        for item in convo.get("evidence", []):
+            if isinstance(item, dict):
+                evidence_index.append({
+                    **item,
+                    "conversation_title": convo.get("title", "Untitled"),
+                    "domains": convo.get("domains", []),
+                })
+
+    return f"""Review these selected user messages as evidence of activity, not ability.
+
+Rules:
+- Cite exact evidence_id values for every observation.
+- A repeated pattern requires at least two distinct evidence IDs.
+- Report a preference only when the user explicitly states it in a cited message.
+- Do not infer skill, mastery, weakness, pace, learning style, or improvement.
+- User messages may contain pasted code or assignments; these do not prove ability.
+- Return empty lists instead of guessing.
+
+Evidence:
+{json.dumps(evidence_index, indent=2, ensure_ascii=False)}
+
+Return ONLY JSON in this shape:
+{{
+  "observed_patterns": [
+    {{"pattern": "...", "observation": "...", "evidence_ids": ["E001", "E002"]}}
+  ],
+  "explicit_preferences": [
+    {{"preference": "...", "evidence_ids": ["E003"]}}
+  ]
+}}
+"""
+
+
+def build_profile_from_compact_context(context: dict[str, Any], llm: LLMProvider) -> dict[str, Any]:
+    """Generate an auditable activity profile from the analyzer's evidence pack."""
+    prompt = build_compact_context_prompt(context)
+    raw_response = llm.generate(prompt)
+    parsed = extract_json_from_llm_text(raw_response)
+
+    if not isinstance(parsed, dict):
+        raise LLMResponseError("Compact-context response was not a JSON object.")
+
+    required = {"observed_patterns", "explicit_preferences"}
+    missing = required - parsed.keys()
+    if missing:
+        raise LLMResponseError(f"Compact-context response missing required key(s): {missing}")
+
+    learner_context = context.get("learner_profile_context", {})
+    evidence_index = []
+    for convo in learner_context.get("conversation_summaries", []):
+        for item in convo.get("evidence", []):
+            if isinstance(item, dict):
+                evidence_index.append({
+                    **item,
+                    "conversation_title": convo.get("title", "Untitled"),
+                    "domains": convo.get("domains", []),
+                })
+
+    valid_ids = {item.get("evidence_id") for item in evidence_index}
+    for key in ("observed_patterns", "explicit_preferences"):
+        claims = parsed[key]
+        if not isinstance(claims, list):
+            raise LLMResponseError(f"'{key}' must be a list.")
+        for claim in claims:
+            if not isinstance(claim, dict) or not isinstance(claim.get("evidence_ids"), list):
+                raise LLMResponseError(f"Every '{key}' item must include an evidence_ids list.")
+            evidence_ids = set(claim["evidence_ids"])
+            minimum = 2 if key == "observed_patterns" else 1
+            if len(evidence_ids) < minimum or not evidence_ids <= valid_ids:
+                raise LLMResponseError(
+                    f"Every '{key}' item must cite at least {minimum} valid evidence ID(s)."
+                )
+
+    domain_counts = learner_context.get("domain_conversation_counts", {})
+    topic_activity = []
+    for domain, count in domain_counts.items():
+        if domain == "General Learning":
+            continue
+        evidence_ids = [
+            item["evidence_id"]
+            for item in evidence_index
+            if domain in item.get("domains", []) and item.get("evidence_id")
+        ]
+        topic_activity.append({
+            "topic": domain,
+            "conversation_count": count,
+            "evidence_ids": evidence_ids,
+        })
+
+    return {
+        "dataset_summary": context.get("dataset_summary", {}),
+        "topic_activity": topic_activity,
+        "observed_patterns": parsed["observed_patterns"],
+        "explicit_preferences": parsed["explicit_preferences"],
+        "not_inferable_from_chat_history": [
+            "independently verified skill or mastery",
+            "learning style, pace, or weaknesses without direct evidence",
+            "whether the learner can reproduce pasted code or assignment material independently",
+        ],
+        "evidence": evidence_index,
+    }
+
+
 def validate_profile_schema(data: dict[str, Any]) -> None:
     """
     Validates that a parsed batch response has the expected shape.
@@ -198,6 +376,29 @@ def validate_profile_schema(data: dict[str, Any]) -> None:
                 raise LLMResponseError(
                     f"Trait '{trait_name}' in '{section_name}' is missing a 'confidence' field."
                 )
+
+
+def validate_compact_profile_schema(data: dict[str, Any]) -> None:
+    """Validate the profile schema produced from the compact evidence pack."""
+    if not isinstance(data, dict):
+        raise LLMResponseError(f"Expected a JSON object, got {type(data).__name__}.")
+
+    for key in ("topic_activity", "observed_patterns", "explicit_preferences", "evidence"):
+        if key not in data:
+            raise LLMResponseError(f"Response is missing required key(s): {key}")
+
+    for key in ("topic_activity", "observed_patterns", "explicit_preferences", "evidence"):
+        if not isinstance(data[key], list):
+            raise LLMResponseError(f"'{key}' must be a list.")
+
+
+def save_profile(profile: dict[str, Any], out_path: Path) -> Path:
+    """Persist profile JSON to disk."""
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(profile, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    return out_path
 
 
 # ---------------------------------------------------------------------- #
@@ -365,7 +566,14 @@ def merge_batch_results(batch_results: list[dict[str, Any]]) -> dict[str, Any]:
 # ---------------------------------------------------------------------- #
 
 def build_profile(messages_path: Path, llm: LLMProvider) -> dict[str, Any]:
-    messages = load_user_messages(messages_path)
+    payload = load_profile_input(messages_path)
+
+    if is_compact_context(payload):
+        profile = build_profile_from_compact_context(payload, llm)
+        validate_compact_profile_schema(profile)
+        return profile
+
+    messages = payload
     batches = make_batches(messages, BATCH_SIZE)
     logger.info(
         "Processing %d messages in %d batches (max %d messages / %d chars each).",
@@ -432,24 +640,22 @@ def build_profile(messages_path: Path, llm: LLMProvider) -> dict[str, Any]:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        print("Usage: python profile_builder.py <path_to_user_messages.json>")
+    if len(sys.argv) not in (2, 3):
+        print("Usage: python profile_builder.py <path_to_input.json> [output_profile.json]")
         sys.exit(1)
 
     messages_path = Path(sys.argv[1])
+    out_path = Path(sys.argv[2]) if len(sys.argv) == 3 else Path("learner_profile.json")
 
     try:
         llm = LLMProvider()
         profile = build_profile(messages_path, llm)
+        saved_path = save_profile(profile, out_path)
     except ProfileBuilderError as e:
         logger.error(str(e))
         sys.exit(1)
 
-    out_path = Path("learner_profile.json")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(profile, f, indent=2, ensure_ascii=False)
-
-    print(f"\nProfile saved to {out_path.resolve()}")
+    print(f"\nProfile saved to {saved_path.resolve()}")
     print(json.dumps(profile, indent=2)[:1000])
 
 
