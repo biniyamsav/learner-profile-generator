@@ -5,6 +5,8 @@ __pycache__/
 *.pyo
 *.pyd
 *.env
+*.pdf
+*.zip
 
 # Ignore private/generated data and chat export artifacts
 phase0_proof_of_concept/Data/

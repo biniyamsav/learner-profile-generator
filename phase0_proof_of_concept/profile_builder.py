@@ -258,10 +258,13 @@ def build_compact_context_prompt(context: dict[str, Any]) -> str:
 
 Rules:
 - Cite exact evidence_id values for every observation.
-- A repeated pattern requires at least two distinct evidence IDs.
+- A repeated pattern requires at least two distinct evidence IDs about the same or closely related learning topic/task.
+- Do not create generic patterns such as "asks for help" by combining unrelated subjects.
+- Each pattern should name the concrete topic or repeated task and what the messages show about it.
 - Report a preference only when the user explicitly states it in a cited message.
 - Do not infer skill, mastery, weakness, pace, learning style, or improvement.
 - User messages may contain pasted code or assignments; these do not prove ability.
+- Exclude administrative applications, personal reassurance, and hardware support from learning patterns unless the evidence explicitly connects them to a learning goal.
 - Return empty lists instead of guessing.
 
 Evidence:

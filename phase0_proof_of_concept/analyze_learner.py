@@ -7,8 +7,8 @@ from typing import Any
 INPUT_FILE = Path("user_messages.json")
 OUTPUT_FILE = Path("rich_learner_context.json")
 
-MAX_CONVERSATIONS = 16
-MAX_EVIDENCE_PER_CONVO = 2
+MAX_CONVERSATIONS = 24
+MAX_EVIDENCE_PER_CONVO = 4
 MAX_SNIPPET_CHARS = 260
 
 LEARNING_REQUEST_RE = re.compile(
@@ -31,12 +31,12 @@ ERROR_RE = re.compile(
 TOPIC_KEYWORDS = {
     "Python": ["python", "pandas", "pd.", "numpy", "streamlit", "plotly", "altair", "flask", "sklearn", "scikit-learn", "matplotlib", "dataframe", "jupyter"],
     "SQL": ["sql", "postgres", "postgresql", "mysql", "sqlite", "psycopg", "sqlalchemy", "database schema"],
-    "C++": ["#include", "iostream", "using namespace std", "vector", "template<typename", "c++", "std::", "g++", "int main"],
+    "C++": ["#include", "iostream", "using namespace std", "template<typename", "c++", "std::", "g++", "int main"],
     "Java": ["java", "jvm", "public static void main", "system.out.println", "javac"],
-    "Data Science": ["data science", "machine learning", "classification", "regression", "accuracy", "training data", "validation set", "feature engineering", "dataset", "tensorflow", "pytorch", "overfitting", "underfitting"],
+    "Data Science": ["data science", "machine learning", "machine learning classification", "regression model", "model accuracy", "training data", "validation set", "feature engineering", "dataset", "tensorflow", "pytorch", "overfitting", "underfitting"],
     "Web App": ["streamlit", "flask", "html", "css", "api", "frontend", "backend", "dashboard", "request.get_json", "app.route", "endpoint"],
     "Big Data": ["kafka", "spark", "pyspark", "hdfs", "trino", "distributed computing", "partition", "broker"],
-    "Math/Stats": ["derivative", "probability", "probability distribution", "binomial", "expectation", "conditional probability", "log-normal", "integral", "standard deviation", "hypothesis test", "combinatorics"],
+    "Math/Stats": ["derivative", "probability", "probability distribution", "binomial", "expectation", "conditional probability", "log-normal", "integral", "standard deviation", "hypothesis test", "combinatorics", "vector projection", "scalar projection", "linear algebra", "dot product"],
     "Linux/Git": ["git", "bash", "zsh", "powershell", "terminal", "venv", "pip install", "git status", "ubuntu", "linux", "command line"],
     "Blockchain": ["blockchain", "ethereum", "metamask", "wallet", "smart contract", "tenderly", "gas fee", "transaction"],
 }
@@ -105,7 +105,11 @@ def detect_domains(text: str) -> list[str]:
             for keyword in keywords
         ):
             hits.append(domain)
-    if re.search(r"\bselect\b.{0,160}\bfrom\b|\bjoin\b.{0,100}\bon\b", lower):
+    if re.search(
+        r"\bselect\b.{0,160}\bfrom\b.{0,100}\b(where|join|group by|order by|limit)\b"
+        r"|\b(insert into|update\s+\w+\s+set|create table|alter table)\b",
+        lower,
+    ):
         hits.append("SQL")
     return hits[:3]
 
@@ -183,6 +187,7 @@ def summarize_conversation(messages: list[dict[str, Any]]) -> dict[str, Any]:
             "text": build_evidence_snippet(text),
             "kind": ", ".join(detect_learning_behaviors(text)) or "learner_question_or_request",
             "source_note": classify_evidence_source(text),
+            "domains": detect_domains(text),
             "message_id": str(message.get("message_id", "")),
             "create_time": message.get("create_time"),
         }
@@ -191,7 +196,7 @@ def summarize_conversation(messages: list[dict[str, Any]]) -> dict[str, Any]:
 
     domains = []
     for item in evidence:
-        domains.extend(detect_domains(item["text"]))
+        domains.extend(item["domains"])
     domains = sorted({d: 0 for d in domains}.keys(), key=lambda d: (-domains.count(d), d))
 
     behaviors = []
@@ -214,7 +219,7 @@ def summarize_conversation(messages: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
-def build_larger_context(json_path: Path):
+def build_larger_context(json_path: Path, output_path: Path | None = None) -> dict[str, Any] | None:
     if not json_path.exists():
         print(f"Error: Could not find {json_path}")
         return
@@ -287,13 +292,16 @@ def build_larger_context(json_path: Path):
         },
     }
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    destination = output_path or OUTPUT_FILE
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with open(destination, "w", encoding="utf-8") as f:
         json.dump(final_payload, f, indent=2, ensure_ascii=False)
 
     print(f"Loaded {len(raw_data):,} total messages from {json_path.name}")
     print(f"Selected {len(summaries)} high-signal conversations")
-    print(f"Saved compact learner context to {OUTPUT_FILE}")
+    print(f"Saved compact learner context to {destination}")
     print(f"Estimated size: ~{len(json.dumps(final_payload, ensure_ascii=False)):,} characters")
+    return final_payload
 
 
 if __name__ == "__main__":
