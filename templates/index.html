@@ -170,6 +170,11 @@
             box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
         }
 
+        .file-drop.drag-over {
+            border-color: rgba(255,255,255,0.48);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+        }
+
         .file-drop input[type="file"] {
             position: absolute;
             inset: 0;
@@ -216,6 +221,50 @@
         button:disabled {
             opacity: 0.7;
             cursor: wait;
+        }
+
+        #submitBtn[hidden] { display: none; }
+
+        .upload-progress-wrap {
+            margin: 2px 0 18px;
+        }
+
+        .upload-progress-wrap[hidden] { display: none; }
+
+        #uploadProgress {
+            display: block;
+            width: 100%;
+            height: 10px;
+            overflow: hidden;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.1);
+            appearance: none;
+        }
+
+        #uploadProgress::-webkit-progress-bar {
+            border-radius: 999px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        #uploadProgress::-webkit-progress-value {
+            border-radius: 999px;
+            background: #dfe3e7;
+            transition: width 0.15s ease;
+        }
+
+        #uploadProgress::-moz-progress-bar {
+            border-radius: 999px;
+            background: #dfe3e7;
+        }
+
+        .upload-progress-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 0.82rem;
         }
 
         #statusMessage {
@@ -304,15 +353,23 @@
                 <p>Upload a ChatGPT export ZIP file to build a clean, evidence-based learner summary.</p>
 
                 <form id="uploadForm">
-                    <div class="file-drop">
+                    <div class="file-drop" id="fileDrop">
                         <input type="file" id="zipFile" name="file" accept=".zip" required>
                         <div class="file-drop-label">
                             <strong>Select ChatGPT export</strong>
-                            .zip file only
+                            .zip file only, or drop it here
                         </div>
                     </div>
 
-                    <button type="submit" id="submitBtn" disabled>Generate Profile PDF</button>
+                    <div class="upload-progress-wrap" id="uploadProgressWrap" hidden>
+                        <progress id="uploadProgress" max="100" value="0" aria-label="File upload progress"></progress>
+                        <div class="upload-progress-meta">
+                            <span id="uploadProgressStatus">Preparing upload</span>
+                            <span id="uploadProgressPercent">0%</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" hidden>Generate Profile PDF</button>
                 </form>
 
                 <div id="statusMessage" aria-live="polite">Choose a valid .zip export to continue.</div>
@@ -345,6 +402,13 @@
         const fileInput = document.getElementById('zipFile');
         const submitBtn = document.getElementById('submitBtn');
         const statusMsg = document.getElementById('statusMessage');
+        const fileDrop = document.getElementById('fileDrop');
+        const uploadProgressWrap = document.getElementById('uploadProgressWrap');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const uploadProgressStatus = document.getElementById('uploadProgressStatus');
+        const uploadProgressPercent = document.getElementById('uploadProgressPercent');
+        let stagedUploadId = null;
+        let uploadRequest = null;
 
         function setSubmitState(enabled, message, color = '#adada7') {
             submitBtn.disabled = !enabled;
@@ -352,12 +416,16 @@
             statusMsg.textContent = message;
         }
 
-        fileInput.addEventListener('change', () => {
-            const file = fileInput.files && fileInput.files[0];
-            if (!file) {
-                setSubmitState(false, 'Choose a valid .zip export to continue.');
-                return;
+        function startUpload(file) {
+            if (uploadRequest) {
+                const previousRequest = uploadRequest;
+                uploadRequest = null;
+                previousRequest.abort();
             }
+            stagedUploadId = null;
+            submitBtn.hidden = true;
+            submitBtn.disabled = true;
+            uploadProgressWrap.hidden = true;
 
             const valid = file.name.toLowerCase().endsWith('.zip');
             if (!valid) {
@@ -366,75 +434,156 @@
                 return;
             }
 
-            setSubmitState(true, `Selected: ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`, '#dfe3e7');
+            const fileSizeMb = (file.size / (1024 * 1024)).toFixed(1);
+            uploadProgressWrap.hidden = false;
+            uploadProgress.value = 0;
+            uploadProgressStatus.textContent = `Uploading ${file.name} (${fileSizeMb} MB)`;
+            uploadProgressPercent.textContent = '0%';
+            setSubmitState(false, 'Uploading your file. Generate will appear when the upload finishes.', '#dfe3e7');
+
+            const formData = new FormData();
+            formData.append('file', file);
+            const xhr = new XMLHttpRequest();
+            uploadRequest = xhr;
+
+            xhr.upload.addEventListener('progress', (event) => {
+                if (uploadRequest !== xhr || !event.lengthComputable) return;
+                const percent = Math.round((event.loaded / event.total) * 100);
+                uploadProgress.value = percent;
+                uploadProgressPercent.textContent = `${percent}%`;
+            });
+
+            xhr.addEventListener('load', () => {
+                if (uploadRequest !== xhr) return;
+                uploadRequest = null;
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    let detail = 'Upload failed. Choose the ZIP file and try again.';
+                    try {
+                        detail = JSON.parse(xhr.responseText).detail || detail;
+                    } catch (error) {
+                        if (xhr.responseText) detail = xhr.responseText;
+                    }
+                    uploadProgressStatus.textContent = 'Upload failed';
+                    setSubmitState(false, detail, '#c73d4e');
+                    fileInput.value = '';
+                    return;
+                }
+
+                const result = JSON.parse(xhr.responseText);
+                stagedUploadId = result.upload_id;
+                uploadProgress.value = 100;
+                uploadProgressPercent.textContent = '100%';
+                uploadProgressStatus.textContent = `Upload complete: ${file.name}`;
+                submitBtn.hidden = false;
+                submitBtn.disabled = false;
+                setSubmitState(true, 'Your file is ready. Click Generate Profile PDF to continue.', '#dfe3e7');
+            });
+
+            xhr.addEventListener('error', () => {
+                if (uploadRequest !== xhr) return;
+                uploadRequest = null;
+                uploadProgressStatus.textContent = 'Upload failed';
+                setSubmitState(false, 'Upload failed. Check your connection and choose the file again.', '#c73d4e');
+                fileInput.value = '';
+            });
+
+            xhr.open('POST', '/upload');
+            xhr.send(formData);
+        }
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+                stagedUploadId = null;
+                submitBtn.hidden = true;
+                setSubmitState(false, 'Choose a valid .zip export to continue.');
+                return;
+            }
+            startUpload(file);
         });
 
-        form.addEventListener('submit', async (e) => {
+        fileDrop.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            fileDrop.classList.add('drag-over');
+        });
+
+        fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag-over'));
+
+        fileDrop.addEventListener('drop', (event) => {
+            event.preventDefault();
+            fileDrop.classList.remove('drag-over');
+            const file = event.dataTransfer.files && event.dataTransfer.files[0];
+            if (!file) return;
+
+            const transfer = new DataTransfer();
+            transfer.items.add(file);
+            fileInput.files = transfer.files;
+            startUpload(file);
+        });
+
+        form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            const file = fileInput.files && fileInput.files[0];
-            if (!file || !file.name.toLowerCase().endsWith('.zip')) {
-                setSubmitState(false, 'Please select a valid .zip export first.', '#c73d4e');
+            if (!stagedUploadId || submitBtn.disabled) {
+                setSubmitState(false, 'Wait for the ZIP upload to complete first.', '#c73d4e');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('file', file);
-
+            formData.append('upload_id', stagedUploadId);
+            stagedUploadId = null;
             submitBtn.disabled = true;
+            submitBtn.textContent = 'Generating...';
             statusMsg.style.color = '#dfe3e7';
-            statusMsg.textContent = 'Uploading export... 0%';
+            statusMsg.textContent = 'Generating your profile... This can take a few minutes.';
 
-            try {
-                const xhr = new XMLHttpRequest();
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const blob = new Blob([xhr.response], { type: 'application/pdf' });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = 'learning_profile.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(downloadUrl);
 
-                xhr.upload.addEventListener('progress', (event) => {
-                    if (!event.lengthComputable) return;
-                    const percent = Math.round((event.loaded / event.total) * 100);
-                    statusMsg.textContent = `Uploading export... ${percent}%`;
-                });
+                    statusMsg.style.color = '#1da977';
+                    statusMsg.textContent = 'Profile PDF generated successfully.';
+                    submitBtn.hidden = true;
+                    uploadProgressWrap.hidden = true;
+                    fileInput.value = '';
+                    return;
+                }
 
-                xhr.onreadystatechange = () => {
-                    if (xhr.readyState !== XMLHttpRequest.DONE) return;
-
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        const blob = new Blob([xhr.response], { type: 'application/pdf' });
-                        const downloadUrl = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = downloadUrl;
-                        a.download = 'learning_profile.pdf';
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        window.URL.revokeObjectURL(downloadUrl);
-
-                        statusMsg.style.color = '#1da977';
-                        statusMsg.textContent = 'Profile PDF generated successfully!';
-                        submitBtn.disabled = false;
-                        return;
-                    }
-
-                    let detail = 'Failed to generate profile PDF.';
-                    try {
-                        const errorData = JSON.parse(xhr.responseText);
-                        detail = errorData.detail || detail;
-                    } catch (err) {
-                        detail = xhr.responseText || detail;
-                    }
-
-                    statusMsg.style.color = '#c73d4e';
-                    statusMsg.textContent = detail;
-                    submitBtn.disabled = false;
-                };
-
-                xhr.open('POST', '/analyze');
-                xhr.responseType = 'arraybuffer';
-                xhr.send(formData);
-            } catch (err) {
+                let detail = 'Failed to generate profile PDF.';
+                const responseText = xhr.response instanceof ArrayBuffer
+                    ? new TextDecoder().decode(xhr.response)
+                    : xhr.responseText;
+                try {
+                    detail = JSON.parse(responseText).detail || detail;
+                } catch (error) {
+                    detail = responseText || detail;
+                }
                 statusMsg.style.color = '#c73d4e';
-                statusMsg.textContent = err.message || 'Upload failed.';
-                submitBtn.disabled = false;
-            }
+                statusMsg.textContent = `${detail} Upload the ZIP again to retry.`;
+                submitBtn.hidden = true;
+                fileInput.value = '';
+            });
+
+            xhr.addEventListener('error', () => {
+                statusMsg.style.color = '#c73d4e';
+                statusMsg.textContent = 'Generation failed. Upload the ZIP again to retry.';
+                submitBtn.hidden = true;
+                fileInput.value = '';
+            });
+
+            xhr.open('POST', '/analyze');
+            xhr.responseType = 'arraybuffer';
+            xhr.send(formData);
         });
     </script>
 </body>

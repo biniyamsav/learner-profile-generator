@@ -1,10 +1,16 @@
+import asyncio
 import io
 import json
 import logging
 import os
+import shutil
 import sys
 import tempfile
+import threading
+import time
+import uuid
 import zipfile
+from contextlib import asynccontextmanager
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Callable
@@ -26,9 +32,58 @@ from phase0_proof_of_concept.profile_builder import LLMProvider, ProfileBuilderE
 MAX_UPLOAD_MB = 100
 MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 MAX_ARCHIVE_JSON_BYTES = 600 * 1024 * 1024
+STAGED_UPLOAD_TTL_SECONDS = 30 * 60
+STAGED_UPLOAD_DIR = Path(tempfile.gettempdir()) / "learner-profile-staged-uploads"
 logger = logging.getLogger(__name__)
+_staged_uploads: dict[str, tuple[Path, str, float]] = {}
+_staged_uploads_lock = threading.Lock()
 
-app = FastAPI(title="Learner AI Tutor")
+
+def _remove_expired_staged_uploads() -> None:
+    now = time.monotonic()
+    with _staged_uploads_lock:
+        expired = [
+            upload_id
+            for upload_id, (_, _, expires_at) in _staged_uploads.items()
+            if now >= expires_at
+        ]
+        paths = [_staged_uploads.pop(upload_id)[0] for upload_id in expired]
+    for path in paths:
+        path.unlink(missing_ok=True)
+
+
+def _take_staged_upload(upload_id: str) -> tuple[Path, str] | None:
+    _remove_expired_staged_uploads()
+    with _staged_uploads_lock:
+        staged = _staged_uploads.pop(upload_id, None)
+    if staged is None:
+        return None
+    path, filename, _ = staged
+    return path, filename
+
+
+async def _staged_upload_cleanup_loop() -> None:
+    while True:
+        _remove_expired_staged_uploads()
+        await asyncio.sleep(60)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    shutil.rmtree(STAGED_UPLOAD_DIR, ignore_errors=True)
+    STAGED_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    cleanup_task = asyncio.create_task(_staged_upload_cleanup_loop())
+    try:
+        yield
+    finally:
+        cleanup_task.cancel()
+        try:
+            await cleanup_task
+        except asyncio.CancelledError:
+            pass
+
+
+app = FastAPI(title="Learner AI Tutor", lifespan=lifespan)
 
 
 class ProfileUploadError(ValueError):
@@ -202,22 +257,73 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.post("/upload")
+async def upload_export(file: UploadFile = File(...)) -> dict[str, Any]:
+    if not file.filename or Path(file.filename).suffix.lower() != ".zip":
+        raise HTTPException(status_code=400, detail="Upload a ChatGPT export .zip file.")
+
+    _remove_expired_staged_uploads()
+    upload_id = uuid.uuid4().hex
+    staged_path = STAGED_UPLOAD_DIR / f"{upload_id}.zip"
+    size = 0
+
+    try:
+        with staged_path.open("wb") as destination:
+            while chunk := await file.read(1024 * 1024):
+                size += len(chunk)
+                if size > MAX_UPLOAD_BYTES:
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"This upload exceeds the {MAX_UPLOAD_MB} MB limit.",
+                    )
+                destination.write(chunk)
+    except Exception:
+        staged_path.unlink(missing_ok=True)
+        raise
+
+    if size == 0:
+        staged_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    with _staged_uploads_lock:
+        _staged_uploads[upload_id] = (
+            staged_path,
+            Path(file.filename).name,
+            time.monotonic() + STAGED_UPLOAD_TTL_SECONDS,
+        )
+    return {"upload_id": upload_id, "filename": Path(file.filename).name, "size": size}
+
+
 @app.post("/analyze")
 async def analyze_export(
-    file: UploadFile = File(...),
+    file: UploadFile | None = File(default=None),
+    upload_id: str | None = Form(default=None),
     api_key: str | None = Form(default=None),
 ):
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="No file was uploaded.")
-
-    contents = await file.read()
-    if not contents:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+    if upload_id:
+        staged = _take_staged_upload(upload_id)
+        if staged is None:
+            raise HTTPException(
+                status_code=410,
+                detail="This upload expired or was already used. Please upload the file again.",
+            )
+        staged_path, filename = staged
+        try:
+            contents = staged_path.read_bytes()
+        finally:
+            staged_path.unlink(missing_ok=True)
+    elif file and file.filename:
+        filename = file.filename
+        contents = await file.read()
+        if not contents:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+    else:
+        raise HTTPException(status_code=400, detail="No uploaded file was provided.")
 
     try:
         _, pdf_bytes, _ = generate_profile_from_conversation_upload(
             uploaded_bytes=contents,
-            filename=file.filename,
+            filename=filename,
             api_key=api_key,
         )
     except ProfileUploadError as exc:

@@ -73,6 +73,45 @@ def test_uploaded_profile_rejects_invalid_json():
         generate_pdf_from_bytes(b"not-json")
 
 
+def test_staged_upload_is_used_once_for_profile_generation(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    import app as app_module
+
+    staged_dir = tmp_path / "staged-uploads"
+    monkeypatch.setattr(app_module, "STAGED_UPLOAD_DIR", staged_dir)
+    generated = {}
+
+    def fake_generate_profile(*, uploaded_bytes, filename, api_key=None):
+        generated["bytes"] = uploaded_bytes
+        generated["filename"] = filename
+        return {}, b"%PDF-test", {}
+
+    monkeypatch.setattr(
+        app_module,
+        "generate_profile_from_conversation_upload",
+        fake_generate_profile,
+    )
+
+    with TestClient(app_module.app) as client:
+        upload_response = client.post(
+            "/upload",
+            files={"file": ("chat-export.zip", b"zip contents", "application/zip")},
+        )
+        assert upload_response.status_code == 200
+        upload_id = upload_response.json()["upload_id"]
+        assert list(staged_dir.glob("*.zip"))
+
+        pdf_response = client.post("/analyze", data={"upload_id": upload_id})
+        assert pdf_response.status_code == 200
+        assert pdf_response.content.startswith(b"%PDF-")
+
+        expired_response = client.post("/analyze", data={"upload_id": upload_id})
+        assert expired_response.status_code == 410
+
+    assert generated == {"bytes": b"zip contents", "filename": "chat-export.zip"}
+    assert not list(staged_dir.glob("*.zip"))
+
+
 class FakeProfileLLM:
     def generate(self, prompt):
         import json
