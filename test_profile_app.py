@@ -43,15 +43,35 @@ def test_uploaded_profile_renders_a_pdf():
     assert b"/Type /Pages" in pdf_bytes
 
 
-def test_pdf_topic_labels_render_bold_without_literal_html_tags():
-    from reportlab.platypus import Paragraph
+def test_pdf_topic_table_shows_counts_without_literal_html_tags():
+    from reportlab.platypus import Table
+
     from generate_profile_pdf import build_topics, make_styles
 
     story = build_topics(VALID_PROFILE, make_styles())
-    paragraphs = [item.text for item in story if isinstance(item, Paragraph)]
+    table = next(item for item in story if isinstance(item, Table))
+    topic_cell = table._cellvalues[1][0]
+    conversation_cell = table._cellvalues[1][1]
+    evidence_cell = table._cellvalues[1][2]
 
-    assert any("<b>Python:</b>" in text for text in paragraphs)
-    assert all("&lt;b&gt;" not in text for text in paragraphs)
+    assert topic_cell.text == "Python"
+    assert conversation_cell.text == "1"
+    assert evidence_cell.text == "1"
+
+
+def test_pdf_evidence_record_uses_each_message_and_its_source_metadata():
+    from reportlab.platypus import LongTable
+
+    from generate_profile_pdf import build_evidence_appendix, make_styles
+
+    story = build_evidence_appendix(VALID_PROFILE, make_styles())
+    table = next(item for item in story if isinstance(item, LongTable))
+    rows = table._cellvalues[1:]
+
+    assert len(rows) == len(VALID_PROFILE["evidence"])
+    assert "E001" in rows[0][0].text
+    assert "Python debugging" in rows[0][0].text
+    assert rows[0][1].text == VALID_PROFILE["evidence"][0]["text"]
 
 
 def test_uploaded_profile_rejects_missing_evidence_reference():
